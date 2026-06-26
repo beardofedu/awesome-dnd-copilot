@@ -47,7 +47,8 @@ awesome-dnd-copilot-/
 │   └── agents/
 │       ├── lore-keeper.md        # Agent for lore consistency
 │       ├── session-notes.md      # Agent for session summaries and notes
-│       └── campaign-tracker.md   # Agent for tracking story arcs and threads
+│       ├── campaign-tracker.md   # Agent for tracking story arcs and threads
+│       └── notes-analysis.md     # Agent for analyzing GitHub Issue notes and campaign impact
 └── running-campaign/
     ├── copilot-instructions.md   # Base instructions for running sessions
     └── agents/
