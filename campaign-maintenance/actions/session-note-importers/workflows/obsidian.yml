@@ -97,4 +97,4 @@ jobs:
           git add -- "session-inbox/imports/obsidian/$IMPORT_FILENAME"
           git commit -m "Import Obsidian session notes"
           git push origin "$branch"
-          gh pr create --draft --title "Review Obsidian session notes import" --body "Review the imported, source-linked notes in \`session-inbox/imports/obsidian/$IMPORT_FILENAME\` before merging. This is DM-only campaign data. Source identity: \`$SOURCE_MARKER\`."
+          gh pr create --draft --base "$GITHUB_REF_NAME" --title "Review Obsidian session notes import" --body "Review the imported, source-linked notes in \`session-inbox/imports/obsidian/$IMPORT_FILENAME\` before merging. This is DM-only campaign data. Source identity: \`$SOURCE_MARKER\`."
