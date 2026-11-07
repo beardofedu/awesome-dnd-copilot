@@ -11,7 +11,7 @@ import sys
 
 SOURCE = Path(__file__).absolute().parents[2]
 TEMPLATE = PurePosixPath("campaign-creation/templates/campaign-starter")
-FILE_REFERENCE = re.compile(r"`([A-Za-z0-9_][A-Za-z0-9_./-]*\.[A-Za-z0-9_-]+)`")
+FILE_REFERENCE = re.compile(r"`([A-Za-z0-9_][A-Za-z0-9_./-]*)`")
 
 
 class InstallError(Exception):

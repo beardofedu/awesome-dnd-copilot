@@ -127,12 +127,15 @@ class InstallerTests(unittest.TestCase):
 | `input.template.md` | Input |
 | `review-contract.md` | Contract |
 | `example-review.md` | Example |
+| `LICENSE` | License |
 """)
         for name in ("adventure-playtester.prompt.md", "input.template.md", "review-contract.md"):
             self.write(f"{prefix}/{name}", name)
         self.commit()
         self.write(f"{prefix}/example-review.md", "fictional review")
+        self.commit()
         self.assertNotIn("campaign-creation/adventure-playtester", installer.discover(self.source)[2])
+        self.write(f"{prefix}/LICENSE", "license")
         self.commit()
         self.write(f"{prefix}/untracked.md", "not installed")
         entries = self.plan(kits=["campaign-creation/adventure-playtester"])
@@ -140,7 +143,7 @@ class InstallerTests(unittest.TestCase):
         installed = self.dest / ".github/session-kits/adventure-playtester"
         self.assertEqual({p.name for p in installed.iterdir()}, {
             "README.md", "adventure-playtester.prompt.md", "input.template.md",
-            "review-contract.md", "example-review.md"})
+            "review-contract.md", "example-review.md", "LICENSE"})
 
     def test_write_failure_rolls_back_only_created_paths(self):
         unrelated = self.dest / "keep.txt"
