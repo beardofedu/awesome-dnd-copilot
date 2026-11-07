@@ -44,7 +44,8 @@ class InstallerTests(unittest.TestCase):
         path.write_text(content)
 
     def add_kit(self, name):
-        for file in installer.KIT_REQUIRED:
+        for file in ("README.md", "automation.prompt.md", "automation.recipe.json",
+                     "canvas.prompt.md", "state.example.json"):
             self.write(f"running-campaign/session-kits/{name}/{file}", file)
         self.write(f"running-campaign/session-kits/{name}/workflows/template.yml", "not active")
 
@@ -115,6 +116,31 @@ class InstallerTests(unittest.TestCase):
         entries = self.plan(kits=["running-campaign/later"])
         installer.apply(entries, self.dest)
         self.assertTrue((self.dest / ".github/session-kits/later/state.example.json").exists())
+
+    def test_manual_kit_requires_its_documented_committed_files(self):
+        prefix = "campaign-creation/session-kits/adventure-playtester"
+        self.write(f"{prefix}/README.md", """# Adventure Playtester
+## Contents
+| File | Purpose |
+|---|---|
+| `adventure-playtester.prompt.md` | Prompt |
+| `input.template.md` | Input |
+| `review-contract.md` | Contract |
+| `example-review.md` | Example |
+""")
+        for name in ("adventure-playtester.prompt.md", "input.template.md", "review-contract.md"):
+            self.write(f"{prefix}/{name}", name)
+        self.commit()
+        self.write(f"{prefix}/example-review.md", "fictional review")
+        self.assertNotIn("campaign-creation/adventure-playtester", installer.discover(self.source)[2])
+        self.commit()
+        self.write(f"{prefix}/untracked.md", "not installed")
+        entries = self.plan(kits=["campaign-creation/adventure-playtester"])
+        installer.apply(entries, self.dest)
+        installed = self.dest / ".github/session-kits/adventure-playtester"
+        self.assertEqual({p.name for p in installed.iterdir()}, {
+            "README.md", "adventure-playtester.prompt.md", "input.template.md",
+            "review-contract.md", "example-review.md"})
 
     def test_write_failure_rolls_back_only_created_paths(self):
         unrelated = self.dest / "keep.txt"

@@ -4,11 +4,14 @@ From the root of a checkout of this library, use Python 3.9+ and Git. The
 installer reads tracked paths from the current checkout's `HEAD`, including
 newly committed profiles, agents, and complete session kits. It copies local
 working-tree contents for those paths: review local changes first. Untracked or
-uncommitted new paths are not discovered. Complete kits have the five files
-`README.md`, `canvas.prompt.md`, `automation.prompt.md`,
-`automation.recipe.json`, and `state.example.json` at their root; all tracked
-files beneath the selected kit are copied. Source and destination must not
-contain symlink components; selected source files must be ordinary files.
+uncommitted new paths are not discovered. A discoverable kit has a root
+`README.md` and at least one root `*.prompt.md`. Files listed in a README's
+`File` table or bulleted `Files`/`Contents` section must also be committed.
+This accommodates manual and Canvas/automation kits without prescribing their
+other filenames. All tracked files beneath the selected kit are copied.
+Discovery checks these structural signals, not semantic completeness; review
+the kit's instructions and contents before use. Source and destination must
+not contain symlink components; selected source files must be ordinary files.
 
 ```bash
 # Discover exact identifiers in this checkout.

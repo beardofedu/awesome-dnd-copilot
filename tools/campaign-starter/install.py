@@ -4,14 +4,14 @@
 import argparse
 import os
 from pathlib import Path, PurePosixPath
+import re
 import stat
 import subprocess
 import sys
 
 SOURCE = Path(__file__).absolute().parents[2]
-KIT_REQUIRED = {"README.md", "automation.prompt.md", "automation.recipe.json",
-                "canvas.prompt.md", "state.example.json"}
 TEMPLATE = PurePosixPath("campaign-creation/templates/campaign-starter")
+FILE_REFERENCE = re.compile(r"`([A-Za-z0-9_][A-Za-z0-9_./-]*\.[A-Za-z0-9_-]+)`")
 
 
 class InstallError(Exception):
@@ -39,6 +39,44 @@ def check_no_symlinks(path):
             raise InstallError(f"Symlink not allowed: {current}")
 
 
+def complete_kit(source, files):
+    root = PurePosixPath(*files[0].parts[:3])
+    names = {path.relative_to(root).as_posix() for path in files}
+    if "README.md" not in names or not any(
+            "/" not in name and name.endswith(".prompt.md") for name in names):
+        return False
+    readme = source.joinpath(*root.parts, "README.md")
+    try:
+        check_no_symlinks(readme)
+        if not readme.is_file():
+            return False
+        lines = readme.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError, InstallError):
+        return False
+
+    # Check explicitly listed kit files, not paths mentioned in usage examples.
+    in_files_section = False
+    in_file_table = False
+    for line in lines:
+        if line.startswith("## "):
+            in_files_section = line[3:].strip().lower() in {"files", "contents"}
+        if re.match(r"^\|\s*file\s*\|", line, re.IGNORECASE):
+            in_file_table = True
+            continue
+        if in_file_table and not line.startswith("|"):
+            in_file_table = False
+        text = line.split("|", 2)[1] if in_file_table and line.startswith("|") else (
+            line if in_files_section and re.match(r"^\s*[-*]\s", line) else "")
+        for name in FILE_REFERENCE.findall(text):
+            try:
+                clean_relative(name)
+            except InstallError:
+                return False
+            if name not in names:
+                return False
+    return True
+
+
 def discover(source):
     check_no_symlinks(source)
     try:
@@ -58,8 +96,7 @@ def discover(source):
             kits.setdefault(f"{parts[0]}/{parts[2]}", []).append(path)
         elif path.is_relative_to(TEMPLATE) and path != TEMPLATE:
             starter.append(path)
-    kits = {name: files for name, files in kits.items()
-            if KIT_REQUIRED <= {p.relative_to(PurePosixPath(*p.parts[:3])).as_posix() for p in files}}
+    kits = {name: files for name, files in kits.items() if complete_kit(Path(source), files)}
     return profiles, agents, kits, starter
 
 
