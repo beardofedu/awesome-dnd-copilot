@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from io import BytesIO
 from pathlib import Path
 from urllib.parse import quote, urlencode, urlparse
+from xml.parsers import expat
 from xml.etree import ElementTree
 
 import requests
@@ -24,6 +25,7 @@ import requests
 MAX_ITEM_BYTES = 1_000_000
 MAX_OUTPUT_CHARS = 50_000
 MAX_ITEMS = 50
+MAX_GOOGLE_DRIVE_PAGES = 100
 USER_AGENT = "dnd-session-note-importer/1.0"
 
 
@@ -75,6 +77,48 @@ def _text(data: bytes, *, source: str) -> str:
         return data.decode("utf-8-sig")
     except UnicodeDecodeError:
         raise ImportFailure(f"{source} is not valid UTF-8 text.") from None
+
+
+def _google_drive_files(session, params: dict[str, str], max_items: int, request_errors) -> list[dict]:
+    files = []
+    page_token = None
+    for _ in range(MAX_GOOGLE_DRIVE_PAGES):
+        page_params = dict(params)
+        if page_token:
+            page_params["pageToken"] = page_token
+        try:
+            response = session.get(
+                "https://www.googleapis.com/drive/v3/files",
+                params=page_params,
+                timeout=30,
+                stream=True,
+                allow_redirects=False,
+            )
+        except request_errors as exc:
+            raise ImportFailure(f"Google Drive request failed ({type(exc).__name__}).") from None
+        if response.status_code != 200:
+            response.close()
+            raise ImportFailure(f"Google Drive API returned HTTP {response.status_code}.")
+        try:
+            raw_listing = response.raw.read(MAX_ITEM_BYTES + 1, decode_content=True)
+            if len(raw_listing) > MAX_ITEM_BYTES:
+                raise ImportFailure("Google Drive returned an oversized folder listing.")
+            listing = json.loads(raw_listing)
+            page_files = listing.get("files", [])
+            if not isinstance(page_files, list):
+                raise ImportFailure("Google Drive returned an invalid folder listing.")
+            page_token = listing.get("nextPageToken")
+        except (ValueError, AttributeError):
+            raise ImportFailure("Google Drive returned invalid JSON.") from None
+        finally:
+            response.close()
+        files.extend(page_files[:max_items - len(files)])
+        if len(files) >= max_items or not page_token:
+            return files
+    raise ImportFailure(
+        "Google Drive folder scan reached its page limit before the requested import was complete; "
+        "no partial import was produced."
+    )
 
 
 def _fence(text: str) -> str:
@@ -240,27 +284,7 @@ def import_google_drive(max_items: int) -> list[dict[str, str]]:
         "includeItemsFromAllDrives": "true",
         "fields": "files(id,name,mimeType,modifiedTime,webViewLink),nextPageToken",
     }
-    try:
-        response = session.get(
-            "https://www.googleapis.com/drive/v3/files",
-            params=params,
-            timeout=30,
-            stream=True,
-            allow_redirects=False,
-        )
-    except (requests.RequestException, GoogleAuthError) as exc:
-        raise ImportFailure(f"Google Drive request failed ({type(exc).__name__}).") from None
-    if response.status_code != 200:
-        raise ImportFailure(f"Google Drive API returned HTTP {response.status_code}.")
-    try:
-        raw_listing = response.raw.read(MAX_ITEM_BYTES + 1, decode_content=True)
-        if len(raw_listing) > MAX_ITEM_BYTES:
-            raise ImportFailure("Google Drive returned an oversized folder listing.")
-        files = json.loads(raw_listing).get("files", [])
-    except (ValueError, AttributeError):
-        raise ImportFailure("Google Drive returned invalid JSON.") from None
-    finally:
-        response.close()
+    files = _google_drive_files(session, params, max_items, (requests.RequestException, GoogleAuthError))
     records = []
     for file in files[:max_items]:
         export_url = f"https://www.googleapis.com/drive/v3/files/{quote(file['id'], safe='')}/export"
@@ -306,17 +330,30 @@ def _docx_text(data: bytes, name: str) -> str:
             if document.file_size > MAX_ITEM_BYTES:
                 raise ImportFailure(f"Microsoft 365 document {name} expands beyond the 1 MB text limit.")
             xml = archive.read(document)
-        if b"<!DOCTYPE" in xml.upper() or b"<!ENTITY" in xml.upper():
+        parser = expat.ParserCreate()
+
+        def reject_doctype(*_):
             raise ImportFailure(f"Microsoft 365 document {name} uses unsupported XML declarations.")
+
+        parser.StartDoctypeDeclHandler = reject_doctype
+        parser.Parse(xml, True)
         root = ElementTree.fromstring(xml)
     except ImportFailure:
         raise
-    except (zipfile.BadZipFile, KeyError, ElementTree.ParseError):
+    except (zipfile.BadZipFile, KeyError, ElementTree.ParseError, expat.ExpatError):
         raise ImportFailure(f"Microsoft 365 document {name} is not a readable DOCX file.") from None
     namespace = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
     paragraphs = []
     for paragraph in root.findall(".//w:p", namespace):
-        text = "".join(node.text or "" for node in paragraph.findall(".//w:t", namespace))
+        parts = []
+        for node in paragraph.iter():
+            if node.tag == f"{{{namespace['w']}}}t":
+                parts.append(node.text or "")
+            elif node.tag in {f"{{{namespace['w']}}}br", f"{{{namespace['w']}}}cr"}:
+                parts.append("\n")
+            elif node.tag == f"{{{namespace['w']}}}tab":
+                parts.append("\t")
+        text = "".join(parts)
         if text:
             paragraphs.append(text)
     return "\n".join(paragraphs)
@@ -478,7 +515,8 @@ def import_obsidian(max_items: int) -> list[dict[str, str]]:
             resolved.relative_to(vault)
         except ValueError:
             raise ImportFailure("A tracked Markdown path resolves outside the configured Obsidian folder.") from None
-        content = _text(resolved.read_bytes(), source=f"Obsidian note {path.as_posix()}").strip()
+        with resolved.open("rb") as note:
+            content = _text(note.read(MAX_ITEM_BYTES + 1), source=f"Obsidian note {path.as_posix()}").strip()
         if content:
             records.append(
                 {

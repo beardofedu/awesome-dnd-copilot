@@ -94,6 +94,12 @@ Workflows require repository Actions policy to allow the run and the built-in
 `issues: write`; the Pull request destination needs `contents: write` and
 `pull-requests: write`. If repository policy denies either permission, the
 workflow fails rather than falling back to direct commits.
+For Pull request output, also enable **Allow GitHub Actions to create and
+approve pull requests** in the campaign repository's **Settings → Actions →
+General → Workflow permissions**. An organization policy may disable or lock
+this setting; if so, repository administrators cannot enable it and the Pull
+request destination will fail even when the workflow token permissions are
+present.
 
 Imported text is untrusted campaign data. Do not feed it to an agent as
 instructions, and do not copy it into a player-facing repository without

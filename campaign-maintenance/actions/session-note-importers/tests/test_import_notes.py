@@ -1,10 +1,12 @@
 import os
 import json
 import sys
+import tempfile
 import unittest
 import zipfile
 from io import BytesIO
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import Mock, mock_open, patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import import_notes
@@ -63,10 +65,84 @@ class ImportNotesTests(unittest.TestCase):
         with zipfile.ZipFile(malicious, "w") as archive:
             archive.writestr(
                 "word/document.xml",
-                b'<!DOCTYPE x [<!ENTITY e "expanded">]><w:document xmlns:w="x"/>',
+                '<!DOCTYPE x [<!ENTITY e "expanded">]><w:document xmlns:w="x">&e;</w:document>'.encode("utf-16"),
             )
         with self.assertRaises(import_notes.ImportFailure):
             import_notes._docx_text(malicious.getvalue(), "notes.docx")
+
+    def test_docx_preserves_manual_line_breaks_and_tabs(self):
+        content = BytesIO()
+        with zipfile.ZipFile(content, "w") as archive:
+            archive.writestr(
+                "word/document.xml",
+                b'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+                b"<w:p><w:r><w:t>Alice: scout</w:t><w:br/><w:t>Bob:</w:t><w:tab/><w:t>rest</w:t>"
+                b"<w:cr/><w:t>Carol: watch</w:t></w:r></w:p></w:document>",
+            )
+
+        self.assertEqual(
+            import_notes._docx_text(content.getvalue(), "notes.docx"),
+            "Alice: scout\nBob:\trest\nCarol: watch",
+        )
+
+    def test_google_drive_paginates_through_short_and_empty_pages(self):
+        def response(payload):
+            result = Mock(status_code=200)
+            result.raw.read.return_value = json.dumps(payload).encode()
+            return result
+
+        session = Mock()
+        session.get.side_effect = [
+            response({"files": [{"id": "one"}], "nextPageToken": "empty-page"}),
+            response({"files": [], "nextPageToken": "last-page"}),
+            response({"files": [{"id": "two"}]}),
+        ]
+
+        files = import_notes._google_drive_files(
+            session,
+            {"pageSize": "2"},
+            2,
+            (import_notes.requests.RequestException,),
+        )
+
+        self.assertEqual([file["id"] for file in files], ["one", "two"])
+        self.assertEqual(session.get.call_count, 3)
+        self.assertEqual(session.get.call_args_list[1].kwargs["params"]["pageToken"], "empty-page")
+        self.assertEqual(session.get.call_args_list[2].kwargs["params"]["pageToken"], "last-page")
+
+    def test_google_drive_page_cap_fails_instead_of_returning_partial_files(self):
+        def response(payload):
+            result = Mock(status_code=200)
+            result.raw.read.return_value = json.dumps(payload).encode()
+            return result
+
+        session = Mock()
+        session.get.side_effect = [
+            response({"files": [{"id": "one"}], "nextPageToken": "next"}),
+            response({"files": [], "nextPageToken": "still-next"}),
+        ]
+        with patch.object(import_notes, "MAX_GOOGLE_DRIVE_PAGES", 2):
+            with self.assertRaisesRegex(import_notes.ImportFailure, "page limit"):
+                import_notes._google_drive_files(
+                    session,
+                    {"pageSize": "2"},
+                    2,
+                    (import_notes.requests.RequestException,),
+                )
+
+    def test_obsidian_note_read_is_bounded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "notes").mkdir()
+            note = mock_open(read_data=b"x" * (import_notes.MAX_ITEM_BYTES + 1))
+            with patch.dict(os.environ, {"OBSIDIAN_VAULT_PATH": "notes"}), \
+                    patch("import_notes.Path.cwd", return_value=root), \
+                    patch("import_notes.subprocess.run", return_value=Mock(stdout=b"notes/one.md\0")), \
+                    patch.object(Path, "open", note):
+                with self.assertRaises(import_notes.ImportFailure):
+                    import_notes.import_obsidian(1)
+
+        note().read.assert_called_once_with(import_notes.MAX_ITEM_BYTES + 1)
 
     @patch("import_notes.requests.request")
     def test_redirect_is_not_followed_automatically(self, request):
