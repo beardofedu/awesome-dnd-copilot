@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "export_id": "session-01-player-update",
+  "approval": {
+    "approved_by": "Example DM",
+    "approved_on": "2026-01-11"
+  },
+  "files": [
+    {
+      "path": "approved-export/session-01.md",
+      "sha256": "41c5b4332ca3e2e3c8ade4493af8d8b32177b9af3e085858d32ad7b52cec2b0e"
+    }
+  ]
+}
