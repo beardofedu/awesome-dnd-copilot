@@ -231,7 +231,7 @@ def main(argv=None):
                     fail('output must not overwrite manifest or referenced source files')
                 try:
                     same_file = candidate.samefile(protected)
-                except FileNotFoundError:
+                except (FileNotFoundError, NotADirectoryError):
                     same_file = False
                 except OSError as exc:
                     fail(f'cannot safely inspect output path: {exc}')

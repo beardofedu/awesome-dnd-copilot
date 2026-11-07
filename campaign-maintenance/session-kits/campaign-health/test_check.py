@@ -154,6 +154,16 @@ class HealthTests(unittest.TestCase):
         self.assertEqual(checker.main(args), 2)
         self.assertEqual((self.root / 'note.md').read_bytes(), original_source)
 
+    def test_rerun_with_reference_below_file_reports_dangling_reference(self):
+        self.data['sessions'][0]['fileRefs'] = ['note.md/child.md']
+        self.run_check()
+        args = ['--root', str(self.root), '--manifest', 'manifest.json',
+                '--output-dir', 'out', '--today', '2026-01-20']
+        self.assertEqual(checker.main(args), 1)
+        self.assertEqual(checker.main(args), 1)
+        report = json.loads((self.root / 'out/report.json').read_text(encoding='utf-8'))
+        self.assertIn('dangling-file', {finding['kind'] for finding in report['findings']})
+
     def test_output_path_matching_referenced_source_is_rejected(self):
         self.data['sessions'][0]['fileRefs'] = ['out/report.json']
         (self.root / 'out').mkdir()
