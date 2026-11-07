@@ -1,0 +1,8 @@
+{
+  "id": "fail-source-attribution",
+  "expected": "fail",
+  "expectedError": "is not in the provided references",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": { "quests[0].sourceRef": "not-provided" }
+}

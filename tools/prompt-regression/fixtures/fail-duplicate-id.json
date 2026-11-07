@@ -1,0 +1,13 @@
+{
+  "id": "fail-duplicate-id",
+  "expected": "fail",
+  "expectedError": "duplicates ID 'quest-mill'",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": {
+    "quests": [
+      { "id": "quest-mill", "title": "Visit the mill", "status": "open", "notes": "Not visited.", "sourceRef": "approved-notes" },
+      { "id": "quest-mill", "title": "Ask about the mill", "status": "open", "notes": "Ask the warden.", "sourceRef": "approved-notes" }
+    ]
+  }
+}

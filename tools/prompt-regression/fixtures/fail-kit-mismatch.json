@@ -1,0 +1,8 @@
+{
+  "id": "fail-kit-mismatch",
+  "expected": "fail",
+  "expectedError": "output.audience must be 'dm' for session-bridge",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": { "kit": "session-bridge" }
+}

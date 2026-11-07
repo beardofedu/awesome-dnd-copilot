@@ -1,0 +1,8 @@
+{
+  "id": "fail-audience-boundary",
+  "expected": "fail",
+  "expectedError": "output.audience must be 'player'",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": { "audience": "dm" }
+}

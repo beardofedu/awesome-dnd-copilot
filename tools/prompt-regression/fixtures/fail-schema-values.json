@@ -1,0 +1,11 @@
+{
+  "id": "fail-schema-values",
+  "expected": "fail",
+  "expectedError": "is not an allowed quest status",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": {
+    "quests[0].status": "maybe",
+    "inventory[0].quantity": -2
+  }
+}

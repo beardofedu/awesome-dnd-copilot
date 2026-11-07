@@ -1,0 +1,8 @@
+{
+  "id": "fail-sentinel-leak",
+  "expected": "fail",
+  "expectedError": "explicit test sentinel SYNTHETIC_DM_ONLY_SENTINEL",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": { "recap": "The recovered token is SYNTHETIC_DM_ONLY_SENTINEL." }
+}
