@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "kit": "faction-world-clocks",
+  "reviewStatus": "sample",
+  "campaign": {
+    "id": "reedbridge",
+    "title": "The Lantern at Reedbridge",
+    "rules": "D&D 5e 2024; sample house rule: none",
+    "tone": "adventurous high fantasy"
+  },
+  "turn": {
+    "id": "turn-03",
+    "inGameDate": "13 Harvestfall",
+    "turnBoundary": "After the party spends the night at the inn; in-game only",
+    "dmFocus": "What might the local factions do while the party rests?",
+    "sourceIssueNumber": 42,
+    "sourceIssueUrl": "https://github.com/example/reedbridge/issues/42",
+    "sourceRevision": "body:2026-01-11T12:00:00Z;comment:18:2026-01-11T12:05:00Z",
+    "stateRevision": "reedbridge-r7",
+    "draftedAt": null,
+    "approvedFacts": [
+      {
+        "id": "fact-watch",
+        "text": "The wardens' stated duty is to protect travelers and keep the bridge open.",
+        "sourceRefs": ["src-warden"]
+      },
+      {
+        "id": "fact-crates",
+        "text": "The smugglers' crates were hidden before the party returned to town.",
+        "sourceRefs": ["src-smugglers"]
+      }
+    ],
+    "uncertainties": [
+      {
+        "id": "uncertainty-party",
+        "text": "There is no evidence that the wardens suspect the party.",
+        "sourceRefs": ["src-turn"]
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-warden",
+      "path": "campaign/factions/bridge-wardens.md",
+      "locator": "Goals, paragraph 2",
+      "revision": "commit:abc1234",
+      "excerpt": "Keep the bridge open and protect travelers."
+    },
+    {
+      "id": "src-smugglers",
+      "path": "campaign/sessions/session-02.md",
+      "locator": "Approved DM follow-up",
+      "revision": "commit:def5678",
+      "excerpt": "The crates were hidden before the party returned to town."
+    },
+    {
+      "id": "src-turn",
+      "path": "issue:42",
+      "locator": "Approved current state",
+      "revision": "body:2026-01-11T12:00:00Z",
+      "excerpt": "No faction action has been approved for this in-game turn."
+    }
+  ],
+  "factions": [
+    {
+      "id": "faction-wardens",
+      "name": "Bridge Wardens",
+      "goal": "Keep the bridge open and protect travelers.",
+      "resources": [
+        {
+          "id": "resource-patrol",
+          "name": "Available patrol",
+          "amount": 1,
+          "unit": "team",
+          "sourceRefId": "src-warden"
+        }
+      ],
+      "constraints": ["They cannot leave the bridge unguarded."],
+      "sourceRefs": ["src-warden"]
+    },
+    {
+      "id": "faction-smugglers",
+      "name": "Reedbank smugglers",
+      "goal": "Move the hidden crates without drawing attention.",
+      "resources": [
+        {
+          "id": "resource-crates",
+          "name": "Hidden crates",
+          "amount": null,
+          "unit": "unknown",
+          "sourceRefId": "src-smugglers"
+        }
+      ],
+      "constraints": ["The amount of cargo is not established."],
+      "sourceRefs": ["src-smugglers"]
+    }
+  ],
+  "clocks": [
+    {
+      "id": "clock-bridge-watch",
+      "name": "Warden scrutiny",
+      "factionId": "faction-wardens",
+      "description": "How closely the wardens inspect suspicious traffic.",
+      "status": "approved",
+      "value": 1,
+      "max": 6,
+      "sourceRefId": "src-warden"
+    },
+    {
+      "id": "clock-crates-moved",
+      "name": "Crates moved",
+      "factionId": "faction-smugglers",
+      "description": "Progress toward moving the hidden cargo.",
+      "status": "approved",
+      "value": 2,
+      "max": 4,
+      "sourceRefId": "src-smugglers"
+    }
+  ],
+  "proposals": [
+    {
+      "id": "proposal-wardens-03",
+      "factionId": "faction-wardens",
+      "action": "A patrol asks travelers a few extra questions at the bridge.",
+      "rationale": "A visible, limited response fits the wardens' stated duty.",
+      "costs": ["Proposed use of one patrol team; do not deduct it."],
+      "visibleSigns": [
+        "Travelers mention the extra questions.",
+        "A notice asks for reports of unusual cargo."
+      ],
+      "alternativeResponses": [
+        "The DM may keep the wardens' routine unchanged.",
+        "The party may ask the warden what prompted the questions."
+      ],
+      "uncertainties": ["No evidence links the party to the hidden crates."],
+      "sourceRefs": ["src-warden", "src-turn"],
+      "baseRevision": "reedbridge-r7",
+      "changes": [
+        {
+          "id": "change-wardens-watch",
+          "clockId": "clock-bridge-watch",
+          "delta": 1,
+          "resultingValue": 2,
+          "reason": "A more attentive patrol could increase scrutiny if approved.",
+          "sourceRefId": "src-warden"
+        }
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "proposal-smugglers-03",
+      "factionId": "faction-smugglers",
+      "action": "The smugglers wait for a quieter opportunity rather than move cargo now.",
+      "rationale": "The amount of cargo and their available labor are unknown.",
+      "costs": ["No resource use is established; none is proposed as spent."],
+      "visibleSigns": ["No new movement is visible; a covered cart remains nearby."],
+      "alternativeResponses": [
+        "The DM may leave the smugglers' activity unresolved.",
+        "The party may investigate the cart or ignore it."
+      ],
+      "uncertainties": ["The cart's contents are unconfirmed."],
+      "sourceRefs": ["src-smugglers", "src-turn"],
+      "baseRevision": "reedbridge-r7",
+      "changes": [],
+      "status": "proposed"
+    }
+  ],
+  "audit": {
+    "sourceRevision": "body:2026-01-11T12:00:00Z;comment:18:2026-01-11T12:05:00Z",
+    "notes": ["Fictional example only; no action or clock change is approved."]
+  }
+}
