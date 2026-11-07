@@ -13,6 +13,15 @@ class ValidateFactionWorldClocksTests(unittest.TestCase):
     def test_example_is_valid(self):
         self.assertEqual(validate(copy.deepcopy(SAMPLE)), [])
 
+    def test_review_status_must_be_an_allowed_string(self):
+        for invalid in ([], {}):
+            state = copy.deepcopy(SAMPLE)
+            state["reviewStatus"] = invalid
+            self.assertIn(
+                "$.reviewStatus: expected sample, draft, or approved",
+                validate(state),
+            )
+
     def test_clock_thresholds_are_inclusive_and_out_of_range_is_rejected(self):
         for value in (0, 6):
             state = copy.deepcopy(SAMPLE)

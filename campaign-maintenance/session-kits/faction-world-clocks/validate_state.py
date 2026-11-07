@@ -38,7 +38,8 @@ def validate(data):
         error("$.schemaVersion", "expected 1")
     if data.get("kit") != "faction-world-clocks":
         error("$.kit", 'expected "faction-world-clocks"')
-    if data.get("reviewStatus") not in {"sample", "draft", "approved"}:
+    review_status = data.get("reviewStatus")
+    if not isinstance(review_status, str) or review_status not in {"sample", "draft", "approved"}:
         error("$.reviewStatus", "expected sample, draft, or approved")
 
     campaign = data.get("campaign")

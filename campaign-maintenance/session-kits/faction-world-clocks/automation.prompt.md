@@ -75,9 +75,10 @@ locator; do not claim a file was read unless it was read.
    action success, resolve combat/social outcomes, make players act, punish
    delayed play, or create real-world schedules or deadlines.
 6. Preserve every source record with a stable ID and include source IDs on the
-   facts/proposals they support. Use `sourceRevision` for the supplied approved
-   baseline revision and set each proposal's `baseRevision` to that exact value.
-   Do not claim that a draft changes the approved state.
+   facts/proposals they support. Set `turn.sourceRevision` to the issue/comment
+   revision token and each proposal's `baseRevision` to `turn.stateRevision`, the
+   supplied approved baseline revision. Do not claim that a draft changes the
+   approved state.
 7. Preserve the approved facts and uncertainties in their separate `turn`
    arrays, with source references. Set every baseline clock's `status` to
    `approved`; do not turn a proposal into an approved clock.
