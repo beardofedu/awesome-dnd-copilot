@@ -61,6 +61,13 @@ below.
    mapping files into `approved-export/`. For example, after replacing these
    local paths with your checkouts and private staging location:
 
+   Before copying, add this rule to the player repository's `.gitattributes` so
+   Git preserves the approved export bytes without line-ending conversion:
+
+   ```gitattributes
+   approved-export/** -text
+   ```
+
    ```bash
    DM_EXPORT=/private/dm-staging/session-01.md
    DM_MANIFEST=/private/dm-staging/player-safe-export.manifest.json
