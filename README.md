@@ -12,6 +12,13 @@ Each folder contains ready-to-use Copilot files. Copy what you need into your ow
 | [`campaign-maintenance/`](./campaign-maintenance/) | Track story arcs, manage session notes, and keep lore consistent |
 | [`running-campaign/`](./running-campaign/) | Run sessions, improvise encounters, voice NPCs, and narrate scenes |
 
+## Start a campaign workspace
+
+Use the [campaign starter and selective installer](./tools/campaign-starter/README.md)
+to preview an empty DM workspace and choose one instruction profile, agents,
+and session kits. Applying is explicit; copying files does not activate services
+or make a repository private. Review player exports separately.
+
 ## Copilot App session kits
 
 Use [plug-and-play session kits](./session-kits.md) alongside your existing
