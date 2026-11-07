@@ -12,6 +12,23 @@ Each folder contains ready-to-use Copilot files. Copy what you need into your ow
 | [`campaign-maintenance/`](./campaign-maintenance/) | Track story arcs, manage session notes, and keep lore consistent |
 | [`running-campaign/`](./running-campaign/) | Run sessions, improvise encounters, voice NPCs, and narrate scenes |
 
+## Copilot App session kits
+
+Use [plug-and-play session kits](./session-kits.md) alongside your existing
+campaign instructions. Copy one kit, mix them, or install all three:
+
+| Kit | Helps with |
+|---|---|
+| [Session Bridge](./campaign-maintenance/session-kits/session-bridge/) | Recaps, continuity, and next-session follow-ups |
+| [DM Session Cockpit](./running-campaign/session-kits/dm-session-cockpit/) | Scene cards, NPC references, initiative, and conditions |
+| [Party Journal & Quest Board](./campaign-maintenance/session-kits/party-journal/) | Player-visible quests, inventory, discoveries, and plans |
+
+Each includes a native Canvas creation prompt, an optional paused cloud
+automation recipe, and fictional sample data. Canvases are generated once in
+the App, not registered just by copying files. See the
+[setup guide](./session-kits.md) for copy commands, activation approval, and
+the DM-secret/player-data boundary.
+
 ## How to use these files
 
 ### Copilot Instructions (`copilot-instructions.md`)
@@ -44,17 +61,22 @@ awesome-dnd-copilot-/
 │       └── adventure-designer.md # Agent for quest and encounter design
 ├── campaign-maintenance/
 │   ├── copilot-instructions.md   # Base instructions for campaign maintenance
-│   └── agents/
-│       ├── lore-keeper.md        # Agent for lore consistency
-│       ├── session-notes.md      # Agent for session summaries and notes
-│       ├── campaign-tracker.md   # Agent for tracking story arcs and threads
-│       └── notes-analysis.md     # Agent for analyzing GitHub Issue notes and campaign impact
+│   ├── agents/
+│   │   ├── lore-keeper.md        # Agent for lore consistency
+│   │   ├── session-notes.md      # Agent for session summaries and notes
+│   │   ├── campaign-tracker.md   # Agent for tracking story arcs and threads
+│   │   └── notes-analysis.md     # Agent for analyzing GitHub Issue notes and campaign impact
+│   └── session-kits/
+│       ├── session-bridge/       # Recap and continuity automation/Canvas kit
+│       └── party-journal/        # Player journal automation/Canvas kit
 └── running-campaign/
     ├── copilot-instructions.md   # Base instructions for running sessions
-    └── agents/
-        ├── dungeon-master.md     # Agent for DM narration and rulings
-        ├── npc-voice.md          # Agent for voicing and roleplaying NPCs
-        └── encounter-improv.md   # Agent for improvising encounters
+    ├── agents/
+    │   ├── dungeon-master.md     # Agent for DM narration and rulings
+    │   ├── npc-voice.md          # Agent for voicing and roleplaying NPCs
+    │   └── encounter-improv.md   # Agent for improvising encounters
+    └── session-kits/
+        └── dm-session-cockpit/   # Prep automation and table-facing Canvas kit
 ```
 
 ## Contributing
