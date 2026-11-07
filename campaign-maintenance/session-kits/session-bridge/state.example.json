@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kit": "session-bridge",
+  "audience": "dm",
+  "reviewStatus": "sample",
+  "session": {
+    "id": "sample-session-01",
+    "title": "The Lantern at Reedbridge",
+    "date": "2026-01-10",
+    "inGameDate": "12 Harvestfall",
+    "rules": "D&D 5e 2024",
+    "tone": "adventurous high fantasy",
+    "source": { "issueNumber": null, "url": null, "revision": null }
+  },
+  "updatedAt": null,
+  "recap": "You recovered the missing bridge lantern and promised Warden Mira you would investigate the abandoned mill.",
+  "events": [
+    { "id": "event-lantern", "text": "The party recovered the bridge lantern.", "sourceRef": "fictional sample notes" }
+  ],
+  "facts": [
+    { "id": "fact-mill", "text": "The abandoned mill is north of Reedbridge.", "sourceRef": "fictional sample notes" }
+  ],
+  "suggestions": [
+    { "id": "suggest-mira", "text": "Mira could offer supplies if the party follows through.", "sourceRef": "fictional sample: the party's promise; not established canon" }
+  ],
+  "threads": [
+    { "id": "thread-mill", "title": "Investigate the mill", "status": "active", "detail": "The party promised to investigate; its contents are unknown.", "sourceRef": "fictional sample notes" }
+  ],
+  "npcChanges": [
+    { "id": "npc-mira", "text": "Warden Mira thanked the party for returning the lantern.", "sourceRef": "fictional sample notes" }
+  ],
+  "prep": [
+    { "id": "prep-mill", "text": "Prepare the mill entrance and one possible complication.", "done": false, "sourceRef": "fictional sample: mill thread" }
+  ],
+  "feedback": { "prepMinutes": null, "missedFollowUps": null, "corrections": null, "notes": "" }
+}

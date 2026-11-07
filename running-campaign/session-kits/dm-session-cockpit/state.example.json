@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "kit": "dm-session-cockpit",
+  "audience": "dm",
+  "reviewStatus": "sample",
+  "session": {
+    "id": "sample-session-02",
+    "title": "The Mill Door",
+    "date": "2026-01-17",
+    "inGameDate": null,
+    "rules": "D&D 5e 2024",
+    "tone": "adventurous high fantasy",
+    "source": { "issueNumber": null, "url": null, "revision": null }
+  },
+  "updatedAt": null,
+  "scenes": [
+    {
+      "id": "scene-mill",
+      "title": "Approach the mill",
+      "readAloud": "A slow creak breaks the silence beyond the ivy-covered door.",
+      "dmNotes": "Proposal: let players investigate, negotiate, or retreat. No outcome is predetermined.",
+      "basis": "proposal",
+      "done": false,
+      "sourceRef": "fictional sample prep"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "npc-mira",
+      "name": "Warden Mira",
+      "role": "Bridge warden",
+      "voice": "Proposal: brisk and practical",
+      "knownFacts": ["The party promised to investigate the mill."],
+      "basis": "proposal",
+      "sourceRef": "fictional sample prep"
+    }
+  ],
+  "hooks": [
+    { "id": "hook-lantern", "text": "Who moved the bridge lantern?", "basis": "approved", "sourceRef": "fictional sample approved notes" }
+  ],
+  "combat": {
+    "round": 1,
+    "activeCombatantId": null,
+    "combatants": [
+      { "id": "combatant-rowan", "name": "Rowan (sample)", "initiative": 14, "hp": 18, "maxHp": 18, "conditions": [] },
+      { "id": "combatant-sentry", "name": "Mill sentry (sample)", "initiative": 14, "hp": 12, "maxHp": 12, "conditions": [
+        { "name": "Prone", "expires": "manual", "notes": "Sample only; DM removes when appropriate." }
+      ] }
+    ]
+  },
+  "scratchNotes": "",
+  "feedback": { "lookupInterruptions": null, "corrections": null, "notes": "" }
+}

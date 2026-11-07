@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kit": "party-journal",
+  "audience": "player",
+  "reviewStatus": "sample",
+  "session": {
+    "id": "sample-session-01",
+    "title": "The Lantern at Reedbridge",
+    "date": "2026-01-10",
+    "inGameDate": "12 Harvestfall",
+    "rules": "D&D 5e 2024",
+    "tone": "adventurous high fantasy",
+    "source": { "issueNumber": null, "url": null, "revision": null }
+  },
+  "updatedAt": null,
+  "recap": "We returned the bridge lantern and promised to investigate the abandoned mill.",
+  "quests": [
+    { "id": "quest-mill", "title": "Investigate the mill", "status": "open", "notes": "We have not visited yet.", "sourceRef": "fictional sample approved player notes" }
+  ],
+  "inventory": [
+    { "id": "item-rope", "name": "Rope, 50 feet", "quantity": 1, "holder": "Rowan (sample)", "confirmed": true, "sourceRef": "fictional sample confirmed inventory" }
+  ],
+  "npcs": [
+    { "id": "npc-mira", "name": "Warden Mira", "notes": "Thanked us for returning the lantern.", "sourceRef": "fictional sample approved player notes" }
+  ],
+  "locations": [
+    { "id": "location-mill", "name": "Abandoned mill", "notes": "North of Reedbridge; not yet explored.", "sourceRef": "fictional sample approved player notes" }
+  ],
+  "theories": [
+    { "id": "theory-lantern", "text": "Perhaps someone moved the lantern to distract the warden.", "authorLabel": "Sample player" }
+  ],
+  "plans": [
+    { "id": "plan-mill", "text": "Visit the mill before dusk.", "voters": ["Sample player"] }
+  ],
+  "feedback": { "forgottenGoals": null, "corrections": null, "notes": "" }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "D&D Party Journal Update",
+  "prompt_file": ".github/session-kits/party-journal/automation.prompt.md",
+  "settings": {
+    "ownership": "user",
+    "disabled": true,
+    "require_actor_write_permission": true,
+    "write_scope": "trigger",
+    "tools": [
+      "github/issue_read",
+      "github/get_file_contents",
+      "github/add_issue_comment"
+    ],
+    "triggers": {
+      "issue_labeled": {
+        "types": ["labeled"],
+        "labels": ["journal-update"],
+        "query": "label:player-safe",
+        "allow_copilot_triggers": false,
+        "write_scope": "trigger"
+      }
+    }
+  }
+}
