@@ -1,0 +1,36 @@
+name: Fetch session notes from one source
+description: Fetch and normalize a bounded set of DM-approved campaign notes
+inputs:
+  source:
+    description: Source adapter to run
+    required: true
+  max-items:
+    description: Maximum source records to import (1-50)
+    required: true
+outputs:
+  marker:
+    description: Stable source/content identity marker
+    value: ${{ steps.fetch.outputs.marker }}
+  filename:
+    description: Deterministic destination filename
+    value: ${{ steps.fetch.outputs.filename }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - shell: bash
+      run: python -m pip install -r .github/session-note-importers/requirements.txt
+    - name: Fetch and normalize source notes
+      id: fetch
+      shell: bash
+      env:
+        SOURCE: ${{ inputs.source }}
+        MAX_ITEMS: ${{ inputs.max-items }}
+      run: >-
+        python .github/session-note-importers/import_notes.py
+        --source "$SOURCE"
+        --max-items "$MAX_ITEMS"
+        --output "$RUNNER_TEMP/session-notes.md"
+        --github-output "$GITHUB_OUTPUT"

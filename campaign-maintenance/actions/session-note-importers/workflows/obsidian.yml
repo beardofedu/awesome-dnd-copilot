@@ -1,0 +1,100 @@
+name: Session notes from Obsidian
+
+on:
+  workflow_dispatch:
+    inputs:
+      destination:
+        description: Where to put the reviewed draft
+        type: choice
+        options: [issue, pull_request]
+        default: pull_request
+        required: true
+      max_items:
+        description: Maximum tracked Markdown files to import (1-50)
+        type: number
+        default: 10
+        required: true
+
+jobs:
+  issue:
+    if: inputs.destination == 'issue'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    concurrency:
+      group: session-note-import-obsidian-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: fetch
+        uses: ./.github/session-note-importers
+        with:
+          source: obsidian
+          max-items: ${{ inputs.max_items }}
+        env:
+          OBSIDIAN_VAULT_PATH: ${{ vars.OBSIDIAN_VAULT_PATH }}
+      - name: Create a review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_MARKER: ${{ steps.fetch.outputs.marker }}
+        run: |
+          existing="$(gh issue list --state all --limit 1000 --json url,body | jq -r --arg marker "$SOURCE_MARKER" '.[] | select((.body // "") | contains($marker)) | .url' | head -n 1)"
+          if [ -n "$existing" ]; then
+            echo "An issue already contains this source/content identity: $existing"
+            exit 0
+          fi
+          gh issue create --title "Obsidian session notes import" --body-file "$RUNNER_TEMP/session-notes.md"
+  pull_request:
+    if: inputs.destination == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    concurrency:
+      group: session-note-import-obsidian-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: fetch
+        uses: ./.github/session-note-importers
+        with:
+          source: obsidian
+          max-items: ${{ inputs.max_items }}
+        env:
+          OBSIDIAN_VAULT_PATH: ${{ vars.OBSIDIAN_VAULT_PATH }}
+      - name: Create a review pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_MARKER: ${{ steps.fetch.outputs.marker }}
+          IMPORT_FILENAME: ${{ steps.fetch.outputs.filename }}
+        run: |
+          duplicate="$(gh pr list --state all --limit 1000 --json url,body | jq -r --arg marker "$SOURCE_MARKER" '.[] | select((.body // "") | contains($marker)) | .url' | head -n 1)"
+          if [ -n "$duplicate" ]; then
+            echo "A pull request already contains this source/content identity: $duplicate"
+            exit 0
+          fi
+          branch="session-import/obsidian-${GITHUB_RUN_ID}"
+          existing="$(gh pr list --state all --head "$branch" --json url --jq '.[0].url // empty')"
+          if [ -n "$existing" ]; then
+            echo "A pull request already exists for this run: $existing"
+            exit 0
+          fi
+          gh auth setup-git
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            echo "::error::The import branch already exists without a discoverable pull request; reconcile it manually."
+            exit 1
+          fi
+          mkdir -p "session-inbox/imports/obsidian"
+          cp "$RUNNER_TEMP/session-notes.md" "session-inbox/imports/obsidian/$IMPORT_FILENAME"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --create "$branch"
+          git add -- "session-inbox/imports/obsidian/$IMPORT_FILENAME"
+          git commit -m "Import Obsidian session notes"
+          git push origin "$branch"
+          gh pr create --draft --base "$GITHUB_REF_NAME" --title "Review Obsidian session notes import" --body "Review the imported, source-linked notes in \`session-inbox/imports/obsidian/$IMPORT_FILENAME\` before merging. This is DM-only campaign data. Source identity: \`$SOURCE_MARKER\`."
