@@ -221,6 +221,7 @@ def main(argv=None):
                 fail('--source-base-url must be a plain HTTPS revision URL without credentials, query, or fragment')
         output = safe_path(root, args.output_dir, '--output-dir')
         protected_paths = []
+        report_paths = []
         report = check(root, args.manifest, today, protected_paths)
         for name in ('report.json', 'summary.md'):
             candidate = safe_path(root, args.output_dir + '/' + name, '--output-dir')
@@ -237,6 +238,16 @@ def main(argv=None):
                     fail(f'cannot safely inspect output path: {exc}')
                 if same_file:
                     fail('output must not overwrite manifest or referenced source files')
+            for existing_report in report_paths:
+                try:
+                    same_file = candidate.samefile(existing_report)
+                except (FileNotFoundError, NotADirectoryError):
+                    same_file = False
+                except OSError as exc:
+                    fail(f'cannot safely inspect output path: {exc}')
+                if same_file:
+                    fail('report outputs must not refer to the same file')
+            report_paths.append(candidate)
         output.mkdir(parents=True, exist_ok=True)
         (output / 'report.json').write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8')
         (output / 'summary.md').write_text(render(report, base, root, output), encoding='utf-8')

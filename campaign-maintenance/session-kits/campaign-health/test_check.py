@@ -164,6 +164,18 @@ class HealthTests(unittest.TestCase):
         report = json.loads((self.root / 'out/report.json').read_text(encoding='utf-8'))
         self.assertIn('dangling-file', {finding['kind'] for finding in report['findings']})
 
+    def test_output_reports_sharing_hardlink_are_rejected(self):
+        self.run_check()
+        (self.root / 'out').mkdir()
+        shared = self.root / 'shared.dat'
+        shared.write_text('shared output target', encoding='utf-8')
+        (self.root / 'out/report.json').hardlink_to(shared)
+        (self.root / 'out/summary.md').hardlink_to(shared)
+        args = ['--root', str(self.root), '--manifest', 'manifest.json',
+                '--output-dir', 'out', '--today', '2026-01-20']
+        self.assertEqual(checker.main(args), 2)
+        self.assertEqual(shared.read_text(encoding='utf-8'), 'shared output target')
+
     def test_output_path_matching_referenced_source_is_rejected(self):
         self.data['sessions'][0]['fileRefs'] = ['out/report.json']
         (self.root / 'out').mkdir()
