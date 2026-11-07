@@ -85,6 +85,21 @@ class ImportNotesTests(unittest.TestCase):
             "Alice: scout\nBob:\trest\nCarol: watch",
         )
 
+    def test_docx_does_not_collect_nested_text_box_paragraphs_twice(self):
+        content = BytesIO()
+        with zipfile.ZipFile(content, "w") as archive:
+            archive.writestr(
+                "word/document.xml",
+                b'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+                b"<w:p><w:r><w:t>Anchor</w:t></w:r><w:drawing><w:txbxContent>"
+                b"<w:p><w:r><w:t>Text box note</w:t></w:r></w:p>"
+                b"</w:txbxContent></w:drawing></w:p></w:document>",
+            )
+
+        text = import_notes._docx_text(content.getvalue(), "notes.docx")
+        self.assertEqual(text, "Anchor\nText box note")
+        self.assertEqual(text.count("Text box note"), 1)
+
     def test_google_drive_paginates_through_short_and_empty_pages(self):
         def response(payload):
             result = Mock(status_code=200)
@@ -143,6 +158,23 @@ class ImportNotesTests(unittest.TestCase):
                     import_notes.import_obsidian(1)
 
         note().read.assert_called_once_with(import_notes.MAX_ITEM_BYTES + 1)
+
+    def test_obsidian_rejects_tracked_markdown_symlinks(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            vault = root / "notes"
+            vault.mkdir()
+            target = vault / "private.txt"
+            target.write_text("not a Markdown note")
+            (vault / "linked.md").symlink_to(target)
+            with patch.dict(os.environ, {"OBSIDIAN_VAULT_PATH": "notes"}), \
+                    patch("import_notes.Path.cwd", return_value=root), \
+                    patch(
+                        "import_notes.subprocess.run",
+                        return_value=Mock(stdout=b"notes/linked.md\0"),
+                    ):
+                with self.assertRaisesRegex(import_notes.ImportFailure, "symlink"):
+                    import_notes.import_obsidian(1)
 
     @patch("import_notes.requests.request")
     def test_redirect_is_not_followed_automatically(self, request):

@@ -343,16 +343,22 @@ def _docx_text(data: bytes, name: str) -> str:
     except (zipfile.BadZipFile, KeyError, ElementTree.ParseError, expat.ExpatError):
         raise ImportFailure(f"Microsoft 365 document {name} is not a readable DOCX file.") from None
     namespace = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    paragraph_tag = f"{{{namespace['w']}}}p"
     paragraphs = []
     for paragraph in root.findall(".//w:p", namespace):
         parts = []
-        for node in paragraph.iter():
+        nodes = [paragraph]
+        while nodes:
+            node = nodes.pop()
+            if node is not paragraph and node.tag == paragraph_tag:
+                continue
             if node.tag == f"{{{namespace['w']}}}t":
                 parts.append(node.text or "")
             elif node.tag in {f"{{{namespace['w']}}}br", f"{{{namespace['w']}}}cr"}:
                 parts.append("\n")
             elif node.tag == f"{{{namespace['w']}}}tab":
                 parts.append("\t")
+            nodes.extend(reversed(list(node)))
         text = "".join(parts)
         if text:
             paragraphs.append(text)
@@ -510,7 +516,10 @@ def import_obsidian(max_items: int) -> list[dict[str, str]]:
     candidates.sort()
     records = []
     for path in candidates[:max_items]:
-        resolved = (root / path).resolve()
+        candidate = root / path
+        if candidate.is_symlink():
+            raise ImportFailure("A tracked Markdown symlink cannot be imported as an Obsidian note.")
+        resolved = candidate.resolve()
         try:
             resolved.relative_to(vault)
         except ValueError:

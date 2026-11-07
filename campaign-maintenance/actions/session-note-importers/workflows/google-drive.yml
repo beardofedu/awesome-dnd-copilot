@@ -81,11 +81,12 @@ jobs:
             exit 0
           fi
           branch="session-import/google-drive-${GITHUB_RUN_ID}"
-          existing="$(gh pr list --state all --head "$GITHUB_REPOSITORY_OWNER:$branch" --json url --jq '.[0].url // empty')"
+          existing="$(gh pr list --state all --head "$branch" --json url --jq '.[0].url // empty')"
           if [ -n "$existing" ]; then
             echo "A pull request already exists for this run: $existing"
             exit 0
           fi
+          gh auth setup-git
           if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
             echo "::error::The import branch already exists without a discoverable pull request; reconcile it manually."
             exit 1
@@ -97,6 +98,5 @@ jobs:
           git switch --create "$branch"
           git add -- "session-inbox/imports/google-drive/$IMPORT_FILENAME"
           git commit -m "Import Google Docs session notes"
-          gh auth setup-git
           git push origin "$branch"
           gh pr create --draft --title "Review Google Docs session notes import" --body "Review the imported, source-linked notes in \`session-inbox/imports/google-drive/$IMPORT_FILENAME\` before merging. This is DM-only campaign data. Source identity: \`$SOURCE_MARKER\`."
