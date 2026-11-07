@@ -34,10 +34,13 @@ player repository is private from its readers.
 Build a source revision from the issue body's update timestamp and the last
 non-generated comment ID/update timestamp (or `none`), excluding earlier
 comments bearing this receipt marker. If those metadata are unavailable, state
-that deduplication cannot be verified and stop for manual review. Immediately
-before posting, check comments for a complete receipt for the same revision.
-Post the generic acknowledgement above followed by this marker, substituting
-the actual revision:
+that deduplication cannot be verified and stop for manual review. A complete
+matching receipt is the generic acknowledgement above followed by the exact
+marker for the same revision. Check comments for one before posting and again
+immediately before posting. If a complete matching receipt exists, report its
+comment location and stop without posting. Only when no complete matching
+receipt exists, post the generic acknowledgement above followed by this marker,
+substituting the actual revision:
 
 `<!-- dnd-kit:player-submission-receipt source:SOURCE_REVISION -->`
 
