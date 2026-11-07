@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "kit": "continuity-dashboard",
+  "audience": "dm",
+  "reviewStatus": "sample",
+  "campaign": { "id": "sample-reedbridge", "name": "Reedbridge (fictional)" },
+  "snapshot": {
+    "id": "sample-review",
+    "commit": "0123456789abcdef0123456789abcdef01234567",
+    "issueNumber": 1,
+    "issueUrl": "https://example.invalid/issues/1",
+    "requestBody": "## Campaign\nID: sample-reedbridge\nName: Reedbridge (fictional)\nSnapshot: sample-review\nCommit: 0123456789abcdef0123456789abcdef01234567\n\n## Approved sources\n- ID: sample-notes-01 | Path: fictional/notes-01.md | Date: 2026-01-10\n- ID: sample-notes-02 | Path: fictional/notes-02.md | Date: unknown\n\n## Review focus\nFictional example only.",
+    "capturedAt": "2026-03-01T12:00:00Z"
+  },
+  "updatedAt": null,
+  "sources": [
+    { "id": "sample-notes-01", "path": "fictional/notes-01.md", "commit": "0123456789abcdef0123456789abcdef01234567", "date": "2026-01-10" },
+    { "id": "sample-notes-02", "path": "fictional/notes-02.md", "commit": "0123456789abcdef0123456789abcdef01234567", "date": null }
+  ],
+  "threads": [
+    { "id": "thread-mill", "title": "Investigate the mill", "status": "open", "detail": "The party has not reported visiting.", "refs": [{ "sourceId": "sample-notes-01", "locator": "Promises" }] },
+    { "id": "thread-lantern", "title": "Find the lantern", "status": "resolved", "detail": "The lantern was returned.", "refs": [{ "sourceId": "sample-notes-01", "locator": "Events" }] }
+  ],
+  "npcs": [
+    { "id": "npc-mira", "name": "Warden Mira", "status": null, "detail": "She thanked the party; her present status is not recorded.", "refs": [{ "sourceId": "sample-notes-01", "locator": "Events" }] }
+  ],
+  "promises": [
+    { "id": "promise-mira", "text": "The party promised Mira to investigate the mill.", "status": "open", "refs": [{ "sourceId": "sample-notes-01", "locator": "Promises" }] }
+  ],
+  "decisions": [
+    { "id": "decision-route", "text": "Choose a route to the mill.", "status": "unresolved", "refs": [{ "sourceId": "sample-notes-02", "locator": "Questions" }] }
+  ],
+  "timeline": [
+    { "id": "timeline-lantern", "text": "The party returned the lantern.", "inGameDate": "12 Harvestfall", "sourceDate": "2026-01-10", "refs": [{ "sourceId": "sample-notes-01", "locator": "Events" }] },
+    { "id": "timeline-question", "text": "The route remained undecided.", "inGameDate": null, "sourceDate": null, "refs": [{ "sourceId": "sample-notes-02", "locator": "Questions" }] }
+  ],
+  "facts": [
+    { "id": "fact-mill", "text": "The mill is north of Reedbridge.", "refs": [{ "sourceId": "sample-notes-01", "locator": "Places" }] }
+  ],
+  "proposals": [
+    { "id": "proposal-supplies", "text": "Mira could offer supplies for the trip.", "refs": [{ "sourceId": "sample-notes-02", "locator": "Ideas, not established" }] }
+  ],
+  "conflicts": [
+    {
+      "id": "conflict-bridge",
+      "topic": "Whether the old bridge is passable",
+      "alternatives": [
+        { "text": "The old bridge is passable.", "refs": [{ "sourceId": "sample-notes-01", "locator": "Roads" }] },
+        { "text": "The old bridge is closed.", "refs": [{ "sourceId": "sample-notes-02", "locator": "Roads" }] }
+      ],
+      "resolution": null
+    }
+  ]
+}
