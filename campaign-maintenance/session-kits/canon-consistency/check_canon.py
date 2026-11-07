@@ -103,10 +103,10 @@ def main(argv):
     except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         print(json.dumps({"ok": False, "diagnostics": [
             {"code": "input", "path": "", "message": str(exc)}
-        ]}, ensure_ascii=False))
+        ]}))
         return 2
     diagnostics = validate(data)
-    print(json.dumps({"ok": not diagnostics, "diagnostics": diagnostics}, ensure_ascii=False))
+    print(json.dumps({"ok": not diagnostics, "diagnostics": diagnostics}))
     return 1 if diagnostics else 0
 
 
