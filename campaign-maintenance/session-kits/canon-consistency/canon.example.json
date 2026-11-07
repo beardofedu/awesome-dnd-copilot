@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "rulesVersion": "unknown",
+  "facts": [
+    {
+      "id": "bell-keeper",
+      "status": "canon",
+      "text": "Mira keeps the bell at Ash Harbor.",
+      "source": "Fictional approved session 2, paragraph 3",
+      "references": []
+    },
+    {
+      "id": "bell-proposal",
+      "status": "draft",
+      "text": "A proposal says Mira left Ash Harbor before session 2.",
+      "source": "Fictional draft PR, scene 1",
+      "references": ["bell-keeper"]
+    }
+  ]
+}
