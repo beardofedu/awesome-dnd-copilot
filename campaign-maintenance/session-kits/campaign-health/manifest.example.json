@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "thresholds": { "npcReviewDays": 90, "prepReviewDays": 14 },
+  "sessions": [
+    {
+      "id": "session-01",
+      "date": "2026-01-10",
+      "recap": "sessions/session-01-recap.md",
+      "npcRefs": ["warden-mira"],
+      "fileRefs": ["locations/old-mill.md"]
+    }
+  ],
+  "npcs": [
+    { "id": "warden-mira", "file": "npcs/warden-mira.md", "reviewedOn": "2026-01-10" }
+  ],
+  "prep": [
+    { "id": "mill-prep", "file": "prep/mill.md", "reviewStatus": "unreviewed", "reviewedOn": null }
+  ]
+}

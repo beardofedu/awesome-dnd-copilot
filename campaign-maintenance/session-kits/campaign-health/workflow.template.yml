@@ -1,0 +1,58 @@
+# Copy to .github/workflows/campaign-health.yml in a DM-only campaign repository.
+name: Campaign health
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * 1' # Example: Monday 06:17 UTC; change to suit your campaign.
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check campaign metadata
+        id: health
+        shell: bash
+        run: |
+          set +e
+          python .github/session-kits/campaign-health/check.py \
+            --root . --manifest .github/session-kits/campaign-health/manifest.json \
+            --output-dir .campaign-health-report \
+            --source-base-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_SHA"
+          status=$?
+          set -e
+          if [ "$status" -eq 0 ] || [ "$status" -eq 1 ]; then
+            cat .campaign-health-report/summary.md >> "$GITHUB_STEP_SUMMARY"
+            echo 'report_ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'Campaign health failed: input or report error. See the DM-only job log; no report was published.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "check_status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload DM-only report
+        if: steps.health.outputs.report_ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: campaign-health-report
+          path: |
+            .campaign-health-report/report.json
+            .campaign-health-report/summary.md
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 7
+      - name: Fail on confirmed findings or checker errors
+        if: always()
+        shell: bash
+        env:
+          CHECK_STATUS: ${{ steps.health.outputs.check_status }}
+        run: |
+          if [ "$CHECK_STATUS" != '0' ]; then
+            echo 'Campaign health did not pass; review the summary or job log.'
+            exit 1
+          fi
