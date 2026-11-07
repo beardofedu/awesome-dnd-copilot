@@ -63,7 +63,8 @@ def _multiply(left, right):
 def _validate(data):
     if not isinstance(data, dict):
         raise InputError("$: expected a JSON object")
-    if data.get("rules_version") not in RULES_VERSIONS:
+    rules_version = data.get("rules_version")
+    if not isinstance(rules_version, str) or rules_version not in RULES_VERSIONS:
         raise InputError("$.rules_version: explicitly choose '2014' or '2024'")
     assumptions = data.get("assumptions")
     if not isinstance(assumptions, dict):
@@ -104,7 +105,7 @@ def _validate(data):
                 entity[name] = _range(entry[name], f"{path}.{name}", minimum=0 if name == "hp" else None)
             for name in COMBAT_FIELDS:
                 entity[name] = (
-                    _range(entry[name], f"{path}.{name}", minimum=0)
+                    _range(entry[name], f"{path}.{name}", minimum=0 if name != "attack_bonus" else None)
                     if name in entry else None
                 )
             entity["xp"] = _range(entry["xp"], f"{path}.xp", minimum=0) if "xp" in entry else None
@@ -129,8 +130,10 @@ def _dpr(entity, targets):
     if any(entity[field] is None for field in COMBAT_FIELDS):
         return None
     probabilities = [
-        _attack_probability(entity["attack_bonus"][i], targets[j][1])
-        for i in (0, 1) for j in (0, 1)
+        _attack_probability(attack_bonus, armor_class)
+        for attack_bonus in entity["attack_bonus"]
+        for target in targets
+        for armor_class in target
     ]
     base_damage = _multiply(
         _multiply(entity["damage_per_hit"], entity["attacks_per_action"]),

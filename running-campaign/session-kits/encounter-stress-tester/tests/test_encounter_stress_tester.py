@@ -22,6 +22,34 @@ class EncounterStressTesterTests(unittest.TestCase):
         self.assertEqual(report["xp"]["encounter_total"], [300.0, 300.0])
         self.assertEqual(report["xp"]["budget_result"]["status"], "within")
         self.assertEqual(report["expected_damage_per_round"]["party_focused_on_monster_group"], [12.4, 16.0])
+        self.assertEqual(report["expected_damage_per_round"]["monsters_focusing_party_group"], [4.8, 8.4])
+
+    def test_singleton_groups_are_supported(self):
+        data = sample()
+        data["party"] = data["party"][:1]
+        data["monsters"] = data["monsters"][:1]
+        report = tester.analyze(data)
+        self.assertIsNotNone(report["expected_damage_per_round"]["party_focused_on_monster_group"])
+        self.assertIsNotNone(report["expected_damage_per_round"]["monsters_focusing_party_group"])
+
+    def test_damage_estimate_uses_both_ac_endpoints(self):
+        data = sample()
+        data["party"] = data["party"][:1]
+        data["monsters"] = data["monsters"][:1]
+        data["party"][0].update(attack_bonus=0, damage_per_hit=10, attacks_per_action=1)
+        data["monsters"][0]["ac"] = {"min": 10, "max": 20}
+        report = tester.analyze(data)
+        self.assertEqual(report["expected_damage_per_round"]["party_focused_on_monster_group"], [0.5, 5.5])
+
+    def test_damage_estimate_includes_additional_targets(self):
+        data = sample()
+        data["party"] = data["party"][:1]
+        data["party"][0].update(attack_bonus=0, damage_per_hit=10, attacks_per_action=1)
+        data["monsters"][2:] = [dict(data["monsters"][0], id="sample-extra-target", ac={"min": 5, "max": 8})]
+        data["monsters"][0]["ac"] = 10
+        data["monsters"][1]["ac"] = 15
+        report = tester.analyze(data)
+        self.assertEqual(report["expected_damage_per_round"]["party_focused_on_monster_group"], [3.0, 8.0])
 
     def test_low_and_high_ac_probability_boundaries_and_rounding(self):
         self.assertEqual(tester._attack_probability(-100, 1000), 0.05)
@@ -68,6 +96,12 @@ class EncounterStressTesterTests(unittest.TestCase):
         data["party"][0]["hp"] = True
         cases.append(data)
         data = sample()
+        data["rules_version"] = []
+        cases.append(data)
+        data = sample()
+        data["rules_version"] = {}
+        cases.append(data)
+        data = sample()
         data["monsters"][0]["ac"] = math.inf
         cases.append(data)
         data = sample()
@@ -92,6 +126,13 @@ class EncounterStressTesterTests(unittest.TestCase):
             with self.subTest(invalid=invalid):
                 with self.assertRaises(tester.InputError):
                     tester.analyze(invalid)
+
+    def test_negative_attack_bonus_values_are_valid(self):
+        data = sample()
+        data["party"][0]["attack_bonus"] = -1
+        data["party"][1]["attack_bonus"] = {"min": -2, "max": -1}
+        report = tester.analyze(data)
+        self.assertIsNotNone(report["expected_damage_per_round"]["party_focused_on_monster_group"])
 
     def test_arithmetic_overflow_is_reported_as_invalid(self):
         data = sample()

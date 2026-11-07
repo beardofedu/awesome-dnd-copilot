@@ -16,7 +16,7 @@
       1.9355
     ],
     "party_member_at_extreme_supplied_hp": [
-      3.1429,
+      2.619,
       7.0833
     ]
   },
@@ -39,7 +39,7 @@
   "expected_damage_per_round": {
     "monsters_focusing_party_group": [
       4.8,
-      7.0
+      8.4
     ],
     "party_focused_on_monster_group": [
       12.4,
