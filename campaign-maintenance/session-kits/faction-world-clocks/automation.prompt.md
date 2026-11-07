@@ -49,11 +49,13 @@ locator; do not claim a file was read unless it was read.
 ## Draft one turn
 
 1. Identify the issue URL, issue number, campaign ID, turn ID, and source
-   revision. Make a deterministic revision token from the issue body's
-   `updated_at` and the last non-generated comment's ID and `updated_at` (or
-   `none`). Record the current approved `stateRevision` separately. If stable
-   revision metadata is unavailable, state that manual duplicate/staleness
-   reconciliation is required.
+   revision. Make a deterministic source token from a content fingerprint of
+   the issue body and the IDs and `updated_at` values of chronological,
+   non-generated input comments (or `none`). Exclude issue-wide `updated_at`
+   and generated draft comments so posting a draft or changing a label does not
+   change the token. Record the current approved `stateRevision` separately. If
+   a stable content fingerprint or comment metadata is unavailable, state that
+   manual duplicate/staleness reconciliation is required.
 2. Check comments for a complete draft marker matching the same turn and source
    revision. If found, report its location and stop; do not post a second draft.
    A marker without a complete matching JSON draft is not a completed draft.

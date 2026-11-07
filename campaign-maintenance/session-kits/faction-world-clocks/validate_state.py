@@ -173,15 +173,25 @@ def validate(data):
                     error(f"{path}.sourceRefs[{index}]", f"unknown source {source_ref!r}")
 
         for field in ("costs", "visibleSigns", "alternativeResponses", "uncertainties"):
-            if not isinstance(proposal.get(field), list):
+            entries = proposal.get(field)
+            if not isinstance(entries, list):
                 error(f"{path}.{field}", "expected an array")
+                continue
+            for index, entry in enumerate(entries):
+                if not isinstance(entry, str) or not entry.strip():
+                    error(f"{path}.{field}[{index}]", "expected a non-empty string")
         alternatives = proposal.get("alternativeResponses")
         if isinstance(alternatives, list) and len(alternatives) < 2:
             error(f"{path}.alternativeResponses", "expected at least two alternatives")
 
+        seen_clock_refs = set()
         for change_path, change in records(f"{path}.changes", proposal.get("changes")):
             register_id(change, change_path)
             clock_ref = required_text(change, "clockId", change_path)
+            if clock_ref is not None:
+                if clock_ref in seen_clock_refs:
+                    error(f"{change_path}.clockId", f"duplicate clock change for {clock_ref!r}")
+                seen_clock_refs.add(clock_ref)
             clock = clocks.get(clock_ref)
             if clock_ref is not None and clock is None:
                 error(f"{change_path}.clockId", f"unknown clock {clock_ref!r}")

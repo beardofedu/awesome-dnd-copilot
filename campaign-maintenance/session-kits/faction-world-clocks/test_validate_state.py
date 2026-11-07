@@ -78,6 +78,30 @@ class ValidateFactionWorldClocksTests(unittest.TestCase):
         state["proposals"][0]["changes"][0]["delta"] = 0
         self.assertTrue(any("nonzero integer" in error for error in validate(state)))
 
+    def test_proposal_text_arrays_require_nonempty_strings(self):
+        for field in ("costs", "visibleSigns", "alternativeResponses", "uncertainties"):
+            for invalid in (None, {}, 1, ""):
+                state = copy.deepcopy(SAMPLE)
+                state["proposals"][0][field][0] = invalid
+                self.assertTrue(
+                    any(f"$.proposals[0].{field}[0]: expected a non-empty string" == error
+                        for error in validate(state)),
+                    (field, invalid),
+                )
+
+    def test_proposal_cannot_change_the_same_clock_twice(self):
+        state = copy.deepcopy(SAMPLE)
+        first_change = state["proposals"][0]["changes"][0]
+        first_change["delta"] = 3
+        first_change["resultingValue"] = 4
+        second_change = copy.deepcopy(first_change)
+        second_change["id"] = "change-wardens-watch-again"
+        state["proposals"][0]["changes"].append(second_change)
+        errors = validate(state)
+        self.assertTrue(
+            any("duplicate clock change for 'clock-bridge-watch'" in error for error in errors)
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
