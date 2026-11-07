@@ -13,6 +13,20 @@ class ValidateFactionWorldClocksTests(unittest.TestCase):
     def test_example_is_valid(self):
         self.assertEqual(validate(copy.deepcopy(SAMPLE)), [])
 
+    def test_schema_version_must_be_an_integer(self):
+        state = copy.deepcopy(SAMPLE)
+        state["schemaVersion"] = True
+        self.assertIn("$.schemaVersion: expected 1", validate(state))
+
+    def test_resource_amount_key_is_required_but_may_be_null(self):
+        state = copy.deepcopy(SAMPLE)
+        del state["factions"][1]["resources"][0]["amount"]
+        self.assertIn(
+            "$.factions[1].resources[0].amount: required key is missing",
+            validate(state),
+        )
+        self.assertEqual(validate(copy.deepcopy(SAMPLE)), [])
+
     def test_review_status_must_be_an_allowed_string(self):
         for invalid in ([], {}):
             state = copy.deepcopy(SAMPLE)

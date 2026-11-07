@@ -34,7 +34,7 @@ def validate(data):
             return None
         return value
 
-    if data.get("schemaVersion") != 1:
+    if type(data.get("schemaVersion")) is not int or data["schemaVersion"] != 1:
         error("$.schemaVersion", "expected 1")
     if data.get("kit") != "faction-world-clocks":
         error("$.kit", 'expected "faction-world-clocks"')
@@ -111,8 +111,11 @@ def validate(data):
             register_id(resource, resource_path)
             required_text(resource, "name", resource_path)
             required_text(resource, "unit", resource_path)
-            amount = resource.get("amount")
-            if amount is not None and (type(amount) is not int or amount < 0):
+            if "amount" not in resource:
+                error(f"{resource_path}.amount", "required key is missing")
+            elif resource["amount"] is not None and (
+                type(resource["amount"]) is not int or resource["amount"] < 0
+            ):
                 error(f"{resource_path}.amount", "expected a nonnegative integer or null")
             source_ref = required_text(resource, "sourceRefId", resource_path)
             if source_ref is not None and source_ref not in sources:

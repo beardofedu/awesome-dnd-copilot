@@ -49,8 +49,8 @@ players respond; they are not automatic consequences.
 
 Keep the campaign repository DM-only; labels and personal automation ownership
 are not access controls. Use one issue per turn and provide the complete current
-baseline. A practical issue body follows the sections and fields in the
-`input` object of `state.example.json`:
+baseline. A practical issue body follows the top-level `campaign`, `turn`,
+`sources`, `factions`, and `clocks` fields in `state.example.json`:
 
 - Stable campaign, turn, and in-game boundary identifiers.
 - Edition, house rules, tone, and the current approved `stateRevision`.
