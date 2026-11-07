@@ -1,0 +1,23 @@
+{
+  "name": "D&D Session-Zero Campaign Draft",
+  "prompt_file": ".github/session-kits/session-zero/builder.prompt.md",
+  "settings": {
+    "ownership": "user",
+    "disabled": true,
+    "require_actor_write_permission": true,
+    "write_scope": "trigger",
+    "tools": [
+      "github/issue_read",
+      "github/add_issue_comment"
+    ],
+    "triggers": {
+      "issue_labeled": {
+        "types": ["labeled"],
+        "labels": ["session-zero-draft"],
+        "query": "label:player-safe",
+        "allow_copilot_triggers": false,
+        "write_scope": "trigger"
+      }
+    }
+  }
+}
