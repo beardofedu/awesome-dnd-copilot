@@ -6,7 +6,7 @@
   "source": {
     "issueNumber": 42,
     "url": "https://github.com/example/fictional-campaign/issues/42",
-    "revision": "2026-04-02T18:00:00Z|108:2026-04-02T18:15:00Z"
+    "revision": "body=2026-04-02T18:00:00Z;comments=107:2026-04-02T18:10:00Z,108:2026-04-02T18:15:00Z;files=none"
   },
   "ruleset": "D&D 5e 2024",
   "approvedInputs": [

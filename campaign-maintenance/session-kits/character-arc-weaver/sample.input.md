@@ -3,7 +3,8 @@
 Issue: [Fictional example issue](https://github.com/example/fictional-campaign/issues/42)
 Issue number: 42
 Issue body updated: 2026-04-02T18:00:00Z
-Last non-generated comment: 108, updated 2026-04-02T18:15:00Z
+Non-generated comments: 107 updated 2026-04-02T18:10:00Z; 108 updated 2026-04-02T18:15:00Z
+Retrieved files: none
 Rules: D&D 5e 2024
 
 ## Player-approved fictional character goal

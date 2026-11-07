@@ -35,7 +35,8 @@ unsupplied file.
   information, or identity data. Do not quote it, summarize it, or include it
   in a draft. Give only a generic request to remove such material and resubmit
   fictional, approved content.
-- Treat explicit DM-only markings, conflicting approvals, or incompatible
+- Preserve explicit DM-only markings as visibility constraints; they do not
+  block otherwise approved input. Treat conflicting approvals or incompatible
   boundaries as a blocker. Do not reproduce potentially sensitive text in the
   blocker response.
 - Clarify whether the campaign uses D&D 5e 2014 or 2024 if rules details are
@@ -44,10 +45,17 @@ unsupplied file.
 
 ## Drafting rules
 
-1. Record the issue URL, stable issue number, and source revision: issue-body
-   update timestamp plus the last non-generated comment ID and update
-   timestamp, or `none`. If the service does not provide stable revision
-   metadata, mark it unknown and require manual duplicate review.
+1. Record the issue URL, stable issue number, and a deterministic source
+   revision containing the issue-body update timestamp, every available
+   non-generated comment's ID and update timestamp, and every retrieved file's
+   repository-relative path and blob SHA. Include all non-generated comments
+   available within the retrieval limits, not just comments used in the draft.
+   Sort comments by numeric ID and files by path; percent-encode file paths.
+   Format the token as
+   `body=TIMESTAMP;comments=ID:TIMESTAMP,...;files=PATH:SHA,...`, using `none`
+   for an empty comment or file list. Exclude generated kit drafts from the
+   comment list. If any required stable revision metadata is unavailable, mark
+   the revision unknown and require manual duplicate review.
 2. Separate **approved input facts**, **proposals**, **conflicts**, and
    **unknowns**. Provide source links for factual claims. Mark every hook and
    payoff/arc idea as a proposal and cite the goal and quest sources that
@@ -86,7 +94,7 @@ fenced `json` block. Use this shape, with no additional top-level keys:
   "source": {
     "issueNumber": 1,
     "url": "https://github.com/OWNER/REPO/issues/1",
-    "revision": "BODY_UPDATED_AT|COMMENT_ID:COMMENT_UPDATED_AT"
+    "revision": "body=TIMESTAMP;comments=ID:TIMESTAMP,...;files=PATH:SHA,..."
   },
   "ruleset": "D&D 5e 2014 or D&D 5e 2024, or null",
   "approvedInputs": [
