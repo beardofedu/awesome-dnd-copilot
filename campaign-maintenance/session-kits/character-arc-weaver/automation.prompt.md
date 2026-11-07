@@ -148,9 +148,18 @@ than fabricate metadata.
 - Before posting, search the issue's available comments for the marker
   `<!-- dnd-kit:character-arc-weaver issue:ISSUE_NUMBER source:SOURCE_REVISION -->`.
   If a complete matching draft already exists, report its location and stop.
-- Re-read comments immediately before posting and stop if a complete matching
-  draft appeared. This check is not atomic; concurrent runs can still race and
-  duplicates are possible. Do not claim exactly-once behavior.
+- Immediately before posting, re-read the triggering issue body and all
+  available comments within the retrieval limits, and re-fetch every file used
+  as evidence. Recompute the source revision using the rules above and verify
+  the current explicit approvals and boundaries still support every drafted
+  goal and quest. If the recomputed revision differs from the draft's recorded
+  revision, any input disappeared or is truncated, revision metadata is
+  unverifiable, or current approval cannot be verified, do not post; stop and
+  request renewed review. Do not post a draft based on superseded approval or
+  boundaries.
+- Use this final read to check again for a complete matching draft. This check
+  is not atomic; concurrent runs can still race and duplicates are possible.
+  Do not claim exactly-once behavior.
 - Post only one comment on the triggering issue, with a brief review summary,
   warnings, the exact marker
   `<!-- dnd-kit:character-arc-weaver issue:ISSUE_NUMBER source:SOURCE_REVISION -->`
