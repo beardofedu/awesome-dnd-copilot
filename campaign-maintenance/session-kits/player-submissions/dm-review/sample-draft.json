@@ -8,7 +8,9 @@
     "dmIssueUrl": "https://example.invalid/dm-campaign/issues/42",
     "playerIssueUrl": "https://example.invalid/party/issues/8",
     "playerIssueNumber": 8,
-    "revision": "body:2026-01-11T10:00:00Z;last-comment:none"
+    "playerRevision": "body:2026-01-11T10:00:00Z;last-comment:none",
+    "transferRevision": "transfer-v1",
+    "revision": "player:8@body:2026-01-11T10:00:00Z;last-comment:none;transfer:transfer-v1"
   },
   "submission": {
     "session": "session-08",

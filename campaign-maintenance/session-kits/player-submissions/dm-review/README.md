@@ -12,6 +12,24 @@ revision, and marks the copied text as untrusted player intent. Do not copy
 unsuitable or unnecessary details. Never treat a player-side label or comment
 as permission to expose the DM repository.
 
+Before applying the review label, include the required transfer metadata in the
+private issue body: the public player issue URL and number, its
+`playerRevision` (`body:<update timestamp>;last-comment:<id>@<timestamp-or-none>`),
+a DM-supplied `transferRevision` that changes whenever the selected text changes,
+and an explicit declaration that the input was manually transferred and DM
+reviewed. Clearly delimit the copied text, for example:
+
+```text
+Transfer status: Manually transferred and DM-reviewed by <DM>.
+Player source: <issue URL> (issue <number>)
+Player revision: body:<update timestamp>;last-comment:<id>@<timestamp-or-none>
+Transfer revision: <DM-supplied revision>
+
+BEGIN PLAYER SUBMISSION
+<selected player text>
+END PLAYER SUBMISSION
+```
+
 The optional recipe watches for `player-submission-review` in the DM-only
 repository and comments a draft on that private issue only. The DM/writer applies
 the label after transfer and review. Read-only players can submit in the public
