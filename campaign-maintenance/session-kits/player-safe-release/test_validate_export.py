@@ -48,6 +48,12 @@ class ValidateExportTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_export.ValidationError, "duplicate JSON key"):
             json.loads('{"key": 1, "key": 2}', object_pairs_hook=validate_export._unique_object)
 
+    def test_approval_date_must_be_a_real_calendar_date(self):
+        manifest = self._manifest("approved-export/session-01.md")
+        manifest["approval"]["approved_on"] = "2026-02-30"
+        with self.assertRaisesRegex(validate_export.ValidationError, "valid calendar date"):
+            validate_export._validate_manifest(manifest)
+
     def test_symlink_manifest_is_rejected(self):
         manifest = EXAMPLE / validate_export.MANIFEST_NAME
         with patch.object(Path, "is_symlink", autospec=True,
