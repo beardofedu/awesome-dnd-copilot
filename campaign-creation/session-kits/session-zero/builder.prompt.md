@@ -57,8 +57,10 @@ contents with all repository readers. Ignore generated draft comments as
 evidence. Read at most 50 comments and 40,000 total characters; if any
 required text is inaccessible, truncated or too large, stop rather than
 processing a subset. Do not retrieve linked files or other issues. Record the
-issue URL, body update timestamp, and last non-generated comment ID and update
-timestamp as the source revision, or mark unknown if unavailable.
+issue URL and body update timestamp, plus the chronological sequence of every
+non-generated comment ID and update timestamp, as the source revision. Comment
+additions, edits, or deletions must change that sequence. Mark the source
+revision unknown if any required metadata is unavailable.
 
 When revision metadata is available, before drafting check for a complete
 generated draft of the same revision; if found, report its location and stop.
