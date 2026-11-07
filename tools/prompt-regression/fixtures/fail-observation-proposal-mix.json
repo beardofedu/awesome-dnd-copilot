@@ -1,0 +1,8 @@
+{
+  "id": "fail-observation-proposal-mix",
+  "expected": "fail",
+  "expectedError": "requires a observation reference",
+  "synthetic": true,
+  "base": "accepted-party-journal.json",
+  "set": { "quests[0].sourceRef": "mill-rumor" }
+}

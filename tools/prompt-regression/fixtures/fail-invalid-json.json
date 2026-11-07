@@ -1,0 +1,7 @@
+{
+  "id": "fail-invalid-json",
+  "expected": "fail",
+  "expectedError": "output is invalid JSON",
+  "synthetic": true,
+  "rawOutput": "{\"schemaVersion\": 1,"
+}

@@ -1,0 +1,22 @@
+name: Prompt regression contracts
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-contracts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run focused unit tests
+        run: python3 -m unittest discover -s tools/prompt-regression/tests -v
+      - name: Check fixtures and current source examples
+        run: python3 tools/prompt-regression/run.py

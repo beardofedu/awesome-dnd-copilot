@@ -1,0 +1,42 @@
+{
+  "id": "accepted-party-journal",
+  "expected": "pass",
+  "synthetic": true,
+  "references": {
+    "approved-notes": { "kind": "observation", "text": "The party returned the lantern and agreed to visit the mill." },
+    "confirmed-inventory": { "kind": "observation", "text": "Rowan confirmed one 50-foot rope." },
+    "mill-rumor": { "kind": "proposal", "text": "A player wonders whether the mill is haunted." }
+  },
+  "output": {
+    "schemaVersion": 1,
+    "kit": "party-journal",
+    "audience": "player",
+    "reviewStatus": "draft",
+    "session": {
+      "id": "session-01",
+      "title": "Lantern at Reedbridge",
+      "date": null,
+      "inGameDate": null,
+      "rules": "D&D 5e 2024",
+      "tone": "adventurous high fantasy",
+      "source": { "issueNumber": 42, "url": "https://example.invalid/issues/42", "revision": "fixture-rev-1" }
+    },
+    "updatedAt": null,
+    "recap": "The party returned the lantern and agreed to visit the mill.",
+    "quests": [
+      { "id": "quest-mill", "title": "Visit the mill", "status": "open", "notes": "The mill has not been explored.", "sourceRef": "approved-notes" }
+    ],
+    "inventory": [
+      { "id": "item-rope", "name": "50-foot rope", "quantity": 1, "holder": "Rowan", "confirmed": true, "sourceRef": "confirmed-inventory" }
+    ],
+    "npcs": [],
+    "locations": [],
+    "theories": [
+      { "id": "theory-mill", "text": "Perhaps the mill is haunted.", "authorLabel": "Iris" }
+    ],
+    "plans": [
+      { "id": "plan-visit", "text": "Visit the mill next time.", "voters": ["Iris"] }
+    ],
+    "feedback": { "forgottenGoals": null, "corrections": 0, "notes": "" }
+  }
+}
