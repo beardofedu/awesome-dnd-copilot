@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "kit": "player-submissions-dm-review",
+  "audience": "dm",
+  "reviewStatus": "sample",
+  "source": {
+    "dmIssueNumber": 42,
+    "dmIssueUrl": "https://example.invalid/dm-campaign/issues/42",
+    "playerIssueUrl": "https://example.invalid/party/issues/8",
+    "playerIssueNumber": 8,
+    "revision": "body:2026-01-11T10:00:00Z;last-comment:none"
+  },
+  "submission": {
+    "session": "session-08",
+    "type": "downtime intention",
+    "character": "Elira",
+    "rulesVersion": "D&D 5e 2024; no relevant house rule known",
+    "intent": "Elira hopes to ask the Reedbridge herbalist about blue flowers seen near the old mill.",
+    "knownContext": [
+      "The player says the flowers were seen near the mill in session-08."
+    ],
+    "uncertainties": [
+      "The flower identity and the herbalist's knowledge are unknown."
+    ]
+  },
+  "dmReview": {
+    "questionsToClarify": [],
+    "possibleConsiderations": [
+      "The DM may decide whether there is time for this downtime scene."
+    ],
+    "playerFacingReplyDraft": null,
+    "decisionOwner": "DM"
+  },
+  "updatedAt": "2026-01-11T10:05:00Z"
+}
