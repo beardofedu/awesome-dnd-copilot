@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "kit": "character-arc-weaver",
+  "audience": "dm",
+  "reviewStatus": "draft",
+  "source": {
+    "issueNumber": 42,
+    "url": "https://github.com/example/fictional-campaign/issues/42",
+    "revision": "2026-04-02T18:00:00Z|108:2026-04-02T18:15:00Z"
+  },
+  "ruleset": "D&D 5e 2024",
+  "approvedInputs": [
+    {
+      "character": "Tamsin Vale",
+      "goal": "I want to learn why the old observatory's star charts show a constellation my grandmother taught me to recognize.",
+      "goalSource": "https://github.com/example/fictional-campaign/issues/42#issuecomment-107",
+      "boundaries": [
+        "Do not reveal that the grandmother is secretly alive.",
+        "Do not decide what Tamsin believes or does."
+      ],
+      "questIds": ["quest-observatory"]
+    }
+  ],
+  "quests": [
+    {
+      "id": "quest-observatory",
+      "title": "Restore the observatory lens",
+      "summary": "The party has agreed to recover the lens from a sealed room in the old observatory so the town archivist can resume mapping the night sky.",
+      "source": "https://github.com/example/fictional-campaign/issues/42#issue-42"
+    }
+  ],
+  "hooks": [
+    {
+      "id": "hook-tamsin-chart-margin-1",
+      "character": "Tamsin Vale",
+      "goalSource": "https://github.com/example/fictional-campaign/issues/42#issuecomment-107",
+      "questIds": ["quest-observatory"],
+      "proposal": "If the party chooses to inspect the observatory's chart table while retrieving the lens, a copied chart could show the same constellation in a different position. This is a proposed clue, not established lore.",
+      "playerChoice": "Tamsin may compare the chart with what she learned, ask the archivist to preserve it, or leave it for later.",
+      "possiblePayoff": "If Tamsin wants to investigate, the archivist could help compare the copied chart with publicly available observations; no explanation is assumed.",
+      "longTermArc": "With the player's continued interest, later approved quests could offer more chart comparisons without defining the grandmother's status or Tamsin's conclusions.",
+      "spotlight": "Offer the comparison as an optional pause that another character can help with; continue the lens quest if Tamsin passes.",
+      "sourceRefs": [
+        "https://github.com/example/fictional-campaign/issues/42#issuecomment-107",
+        "https://github.com/example/fictional-campaign/issues/42#issue-42"
+      ]
+    },
+    {
+      "id": "hook-tamsin-archivist-2",
+      "character": "Tamsin Vale",
+      "goalSource": "https://github.com/example/fictional-campaign/issues/42#issuecomment-107",
+      "questIds": ["quest-observatory"],
+      "proposal": "The town archivist could ask whether Tamsin wants to help test the restored lens against the chart. The invitation does not assume she accepts or that the test proves anything.",
+      "playerChoice": "Tamsin can suggest a different test, invite a companion to participate, decline, or return to the group's other priorities.",
+      "possiblePayoff": "If the group elects to test it, they might gain a better-recorded observation to compare later, not a guaranteed answer or reward.",
+      "longTermArc": "If the player chooses to pursue it, the chart comparison can remain an open question revisited when another approved quest naturally involves the night sky.",
+      "spotlight": "Keep the test brief and collaborative; let the party complete the lens objective without requiring a personal scene.",
+      "sourceRefs": [
+        "https://github.com/example/fictional-campaign/issues/42#issuecomment-107",
+        "https://github.com/example/fictional-campaign/issues/42#issue-42"
+      ]
+    }
+  ],
+  "spotlightBalance": "Only one character goal was supplied, so this draft cannot compare attention across the party. Both hooks are optional, shareable, and skippable; use at most one unless Tamsin's player shows continued interest.",
+  "conflicts": [],
+  "unknowns": [
+    "The chart's meaning, history, and whether it is accurate are unknown.",
+    "Tamsin's interpretation and response are for the player to decide."
+  ],
+  "reviewNotes": [
+    "Fictional sample only; not campaign canon.",
+    "All hooks, payoffs, and longer arcs are proposals contingent on player choice and DM approval.",
+    "Do not disclose this DM-only draft to players; any transfer requires separate manual review."
+  ]
+}
