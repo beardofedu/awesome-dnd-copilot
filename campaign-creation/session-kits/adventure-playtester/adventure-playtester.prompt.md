@@ -21,8 +21,13 @@ Before reading adventure content, require one of:
 - **PR mode:** exact repository, PR number/URL, base branch and full base commit
   SHA, and full head commit SHA. Use only `github/pull_request_read` to inspect
   that PR's metadata/diff and `github/get_file_contents` to read exact referenced
-  files at the verified head SHA. Verify repository, PR, base SHA, head SHA,
-  and changed-file list match the supplied target. A moving branch name is not a
+  files at the verified head SHA. Immediately before retrieving the diff and all
+  pages of the changed-file list, read the PR metadata and verify the repository,
+  PR, base SHA, and head SHA against the supplied target. After retrieving the
+  diff and every changed-file-list page, read the metadata again and verify the
+  same values still match both the supplied target and the pre-retrieval check.
+  If either check differs, discard all retrieved content and stop. Verify the
+  changed-file list matches the supplied target. A moving branch name is not a
   revision. If those tools are unavailable or the PR read does not expose enough
   information to verify the exact pair, stop and request a diff/text supplied
   with stable revision labels; do not claim a verified PR review.

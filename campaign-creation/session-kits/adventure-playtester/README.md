@@ -15,10 +15,11 @@ outputs, and any PR private to that audience: this kit is not player-safe
 material, and a private-looking path or label is not an access control.
 
 The kit is self-contained. No Canvas, automation, custom agent, API key, or
-special model is required. To run it manually, provide the exact input described
-in `input.template.md` to an AI that can follow `adventure-playtester.prompt.md`,
-and supply the complete referenced diff/files within the prompt's limits. Save
-the resulting review wherever the DM chooses; the prompt itself never writes it.
+special model is required. To run it manually, provide both
+`adventure-playtester.prompt.md` and `review-contract.md` as review instructions
+before supplying the completed input described in `input.template.md`. Also
+supply the complete referenced diff/files within the prompt's limits. Save the
+resulting review wherever the DM chooses; the prompt itself never writes it.
 
 For a PR-based review, name the exact repository and PR, base SHA, and head SHA.
 The reviewer must verify those exact revisions before reading the bounded diff
