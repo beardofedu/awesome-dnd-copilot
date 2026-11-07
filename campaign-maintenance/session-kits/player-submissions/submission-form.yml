@@ -1,0 +1,62 @@
+name: Between-session player submission
+description: Share a character's downtime intention, next-session plan, or question for DM review.
+title: "[Player submission] "
+labels:
+  - player-submission
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is visible to people with access to this repository. Do not include DM-only secrets, passwords, contact details, consent/safety information, health details, or other sensitive personal data. This form records player intent only; it does not resolve an action, grant a reward, roll dice, create a ruling, or establish canon.
+  - type: input
+    id: session
+    attributes:
+      label: Session or in-game time
+      description: Use a stable session ID if your group has one. Do not guess if unknown.
+      placeholder: session-08 or "between sessions 7 and 8"
+    validations:
+      required: true
+  - type: dropdown
+    id: submission_type
+    attributes:
+      label: What are you submitting?
+      description: Choose the closest fit; describe a different intent or question below.
+      options:
+        - Downtime intention
+        - Next-session plan
+        - Question for the DM
+    validations:
+      required: true
+  - type: input
+    id: character
+    attributes:
+      label: Character name (optional)
+      description: Fictional character name only.
+  - type: input
+    id: rules_version
+    attributes:
+      label: Rules version (optional)
+      description: If a rules detail matters, specify D&D 5e 2014 or 2024 and any relevant known house rule. Leave blank if unsure.
+      placeholder: D&D 5e 2024; house rule not known
+  - type: textarea
+    id: intent
+    attributes:
+      label: What does your character want to try, plan, or ask?
+      description: Say what you hope to do or learn. Distinguish your character's belief from confirmed facts. Do not present an intended action as completed.
+      placeholder: |
+        My character would like to...
+        What we know / what I am unsure about:
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Possible approach or constraints (optional)
+      description: A proposed approach is not a declared action or guaranteed result. Mention fictional constraints the DM may need to know.
+      placeholder: I might try...; this depends on...
+  - type: textarea
+    id: dm_context
+    attributes:
+      label: Context the DM may need (optional)
+      description: Include only game-relevant, player-safe facts and cite the session/scene if possible. Avoid secrets and personal information.
+      placeholder: We learned this in session...; source/scene...
