@@ -1,0 +1,74 @@
+{
+  "action_counts_per_round": {
+    "monsters": [
+      2.0,
+      2.0
+    ],
+    "party": [
+      2.0,
+      2.0
+    ]
+  },
+  "approximate_rounds_to_down": {
+    "null_means_zero_damage_or_missing_required_statistics": true,
+    "one_monster_at_extreme_supplied_hp": [
+      1.25,
+      1.9355
+    ],
+    "party_member_at_extreme_supplied_hp": [
+      3.1429,
+      7.0833
+    ]
+  },
+  "assumptions": {
+    "attack_model": "d20_natural_1_20",
+    "party_focus_fire": true,
+    "rounding_decimal_places": 4
+  },
+  "effective_hp": {
+    "basis": "supplied HP only; defenses and healing excluded",
+    "monster_total": [
+      40.0,
+      44.0
+    ],
+    "party_total": [
+      50.0,
+      56.0
+    ]
+  },
+  "expected_damage_per_round": {
+    "monsters_focusing_party_group": [
+      4.8,
+      7.0
+    ],
+    "party_focused_on_monster_group": [
+      12.4,
+      16.0
+    ]
+  },
+  "notes": [
+    "Approximation only: not rules-complete or a guarantee of encounter balance.",
+    "Uses the supplied 2014/2024 label for context only; no rules tables or edition-specific modifiers are applied.",
+    "Attack probability is a simplified d20 model with automatic miss on 1, hit on 20; damage assumes each attack hits for the supplied average.",
+    "Ranges are propagated independently and conservatively; correlations, defenses, conditions, saves, critical damage, initiative, and player tactics are not modeled.",
+    "XP budget comparison uses only supplied XP and budget values; no XP thresholds are inferred.",
+    "Effective HP is reported as supplied HP only; resistances, vulnerabilities, temporary HP, and healing are not inferred."
+  ],
+  "rules_version": "2024",
+  "unsupported_input_fields": [],
+  "unsupported_or_missing": [],
+  "xp": {
+    "budget_result": {
+      "comparison": "maximum encounter XP <= minimum supplied budget",
+      "status": "within"
+    },
+    "encounter_total": [
+      300.0,
+      300.0
+    ],
+    "supplied_budget": [
+      350.0,
+      350.0
+    ]
+  }
+}
