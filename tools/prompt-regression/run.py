@@ -59,21 +59,29 @@ def _load_cases():
     return resolved
 
 
+def _fixture_references(case):
+    refs = {
+        entry["id"]: entry["kind"]
+        for entry in case.get("references", {}).values()
+        if isinstance(entry, dict)
+        and isinstance(entry.get("id"), str)
+        and entry.get("kind") in {"observation", "proposal"}
+    }
+    refs.update({
+        name: entry["kind"]
+        for name, entry in case.get("references", {}).items()
+        if isinstance(name, str)
+        and isinstance(entry, dict)
+        and entry.get("kind") in {"observation", "proposal"}
+    })
+    return refs
+
+
 def _fixture_results():
     results = []
     for case_id, (path, case) in _load_cases().items():
         state, parse_errors = read_output(case)
-        refs = {
-            entry["id"]: entry["kind"]
-            for entry in case.get("references", {}).values()
-            if isinstance(entry, dict) and isinstance(entry.get("id"), str) and entry.get("kind") in {"observation", "proposal"}
-        }
-        # Case references are normally represented as id -> object; support that compact form.
-        refs.update({
-            name: entry["kind"]
-            for name, entry in case.get("references", {}).items()
-            if isinstance(name, str) and isinstance(entry, dict) and entry.get("kind") in {"observation", "proposal"}
-        })
+        refs = _fixture_references(case)
         errors = parse_errors or check_state(state, refs, synthetic=case.get("synthetic") is True)
         expected = case.get("expected")
         expected_error = case.get("expectedError")
@@ -93,7 +101,12 @@ def _source_sample_results():
         path = ROOT / relative
         try:
             state = json.loads(path.read_text(encoding="utf-8"))
-            errors = check_state(state, SAMPLE_REFS[kit])
+            if not isinstance(state, dict):
+                errors = check_state(state, SAMPLE_REFS[kit])
+            elif state.get("kit") != kit:
+                errors = [f"output.kit must be {kit!r} for {relative}"]
+            else:
+                errors = check_state(state, SAMPLE_REFS[kit])
         except (OSError, json.JSONDecodeError) as error:
             errors = [f"cannot load {relative}: {error}"]
         results.append((f"source-state:{kit}", not errors, errors, "pass"))
@@ -117,11 +130,7 @@ def main():
                 raise ValueError(f"unknown fixture: {fixture_path.name}")
             _, case = cases[fixture_path.stem]
             state, parse_errors = read_output(case)
-            refs = {
-                name: entry["kind"]
-                for name, entry in case.get("references", {}).items()
-                if isinstance(entry, dict) and entry.get("kind") in {"observation", "proposal"}
-            }
+            refs = _fixture_references(case)
             errors = parse_errors or check_state(state, refs, synthetic=case.get("synthetic") is True)
             if errors:
                 print(f"FAIL {fixture_path.name}")

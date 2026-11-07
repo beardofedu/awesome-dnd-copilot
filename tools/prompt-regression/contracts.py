@@ -107,11 +107,24 @@ def _source(record, path, category, refs, errors):
         errors.append(f"{path} requires a {category} reference, got {expected_kind}")
 
 
-def _record_fields(records, path, fields, errors):
+def _record_fields(records, path, fields, errors, *, strings=(), booleans=(), string_arrays=()):
     if not isinstance(records, list):
         return
     for index, record in enumerate(records):
-        _fields(record, f"{path}[{index}]", fields, errors)
+        record_path = f"{path}[{index}]"
+        if not _fields(record, record_path, fields, errors):
+            continue
+        for field in strings:
+            if field in record:
+                _string(record[field], f"{record_path}.{field}", errors)
+        for field in booleans:
+            if field in record and not isinstance(record[field], bool):
+                errors.append(f"{record_path}.{field} must be boolean")
+        for field in string_arrays:
+            if field not in record or not _array(record[field], f"{record_path}.{field}", errors):
+                continue
+            for item_index, item in enumerate(record[field]):
+                _string(item, f"{record_path}.{field}[{item_index}]", errors)
 
 
 def _feedback(value, path, fields, errors):
@@ -219,15 +232,30 @@ def _check_bridge(state, refs, errors):
         "npcChanges": ("id", "text", "sourceRef"),
         "prep": ("id", "text", "done", "sourceRef"),
     }
+    strings = {
+        "events": ("id", "text", "sourceRef"),
+        "facts": ("id", "text", "sourceRef"),
+        "suggestions": ("id", "text", "sourceRef"),
+        "threads": ("id", "title", "status", "detail", "sourceRef"),
+        "npcChanges": ("id", "text", "sourceRef"),
+        "prep": ("id", "text", "sourceRef"),
+    }
     for name, required in fields.items():
-        _record_fields(state.get(name), f"output.{name}", required, errors)
+        _record_fields(
+            state.get(name),
+            f"output.{name}",
+            required,
+            errors,
+            strings=strings[name],
+            booleans=("done",) if name == "prep" else (),
+        )
     for field in ("events", "facts", "npcChanges", "threads"):
         expected = "observation"
         for i, record in enumerate(state.get(field) if isinstance(state.get(field), list) else []):
             _source(record, f"output.{field}[{i}]", expected, refs, errors)
     for field in ("suggestions", "prep"):
         for i, record in enumerate(state.get(field) if isinstance(state.get(field), list) else []):
-            _source(record, f"output.{field}[{i}]", "proposal", refs, errors)
+            _source(record, f"output.{field}[{i}]", None if field == "suggestions" else "proposal", refs, errors)
     for i, record in enumerate(state.get("threads") if isinstance(state.get("threads"), list) else []):
         if isinstance(record, dict) and (
             not isinstance(record.get("status"), str) or record.get("status") not in {"active", "urgent", "resolved"}
@@ -249,8 +277,23 @@ def _check_party(state, refs, errors):
         "theories": ("id", "text", "authorLabel"),
         "plans": ("id", "text", "voters"),
     }
+    strings = {
+        "quests": ("id", "title", "status", "notes", "sourceRef"),
+        "inventory": ("id", "name", "holder", "sourceRef"),
+        "npcs": ("id", "name", "notes", "sourceRef"),
+        "locations": ("id", "name", "notes", "sourceRef"),
+        "theories": ("id", "text", "authorLabel"),
+        "plans": ("id", "text"),
+    }
     for name, required in fields.items():
-        _record_fields(state.get(name), f"output.{name}", required, errors)
+        _record_fields(
+            state.get(name),
+            f"output.{name}",
+            required,
+            errors,
+            strings=strings[name],
+            booleans=("confirmed",) if name == "inventory" else (),
+        )
     factual = ("quests", "inventory", "npcs", "locations")
     for field in factual:
         for i, record in enumerate(state.get(field) if isinstance(state.get(field), list) else []):
@@ -283,8 +326,21 @@ def _check_cockpit(state, refs, errors):
         "npcs": ("id", "name", "role", "voice", "knownFacts", "basis", "sourceRef"),
         "hooks": ("id", "text", "basis", "sourceRef"),
     }
+    strings = {
+        "scenes": ("id", "title", "readAloud", "dmNotes", "basis", "sourceRef"),
+        "npcs": ("id", "name", "role", "voice", "basis", "sourceRef"),
+        "hooks": ("id", "text", "basis", "sourceRef"),
+    }
     for name, required in fields.items():
-        _record_fields(state.get(name), f"output.{name}", required, errors)
+        _record_fields(
+            state.get(name),
+            f"output.{name}",
+            required,
+            errors,
+            strings=strings[name],
+            booleans=("done",) if name == "scenes" else (),
+            string_arrays=("knownFacts",) if name == "npcs" else (),
+        )
     for field in ("scenes", "npcs", "hooks"):
         for i, record in enumerate(state.get(field) if isinstance(state.get(field), list) else []):
             if not isinstance(record, dict):
@@ -301,9 +357,15 @@ def _check_cockpit(state, refs, errors):
     for i, record in enumerate(combatants):
         path = f"output.combat.combatants[{i}]"
         if not isinstance(record, dict):
+            _object(record, path, errors)
             continue
         _fields(record, path, ("id", "name", "initiative", "hp", "maxHp", "conditions"), errors)
-        combatant_ids.add(record.get("id"))
+        if "id" in record and not isinstance(record["id"], str):
+            errors.append(f"{path}.id must be a stable lowercase ID")
+        elif isinstance(record.get("id"), str):
+            combatant_ids.add(record["id"])
+        if "name" in record:
+            _string(record["name"], f"{path}.name", errors)
         initiative = record.get("initiative")
         if "initiative" in record and initiative is not None and (not isinstance(initiative, int) or isinstance(initiative, bool)):
             errors.append(f"{path}.initiative must be an integer or null")
@@ -316,7 +378,11 @@ def _check_cockpit(state, refs, errors):
             errors.append(f"{path}.conditions must be an array")
         elif isinstance(record.get("conditions"), list):
             for j, condition in enumerate(record["conditions"]):
-                _fields(condition, f"{path}.conditions[{j}]", ("name", "expires", "notes"), errors)
+                condition_path = f"{path}.conditions[{j}]"
+                if _fields(condition, condition_path, ("name", "expires", "notes"), errors):
+                    for field in ("name", "expires", "notes"):
+                        if field in condition:
+                            _string(condition[field], f"{condition_path}.{field}", errors)
     active = combat.get("activeCombatantId")
     if active is not None and (not isinstance(active, str) or active not in combatant_ids):
         errors.append("output.combat.activeCombatantId must identify an existing combatant or be null")
