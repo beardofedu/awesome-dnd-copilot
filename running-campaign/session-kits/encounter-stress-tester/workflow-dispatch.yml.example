@@ -1,0 +1,20 @@
+name: Encounter stress test (manual opt-in)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  estimate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the selected repository revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run deterministic fictional sample
+        run: |
+          python3 .github/session-kits/encounter-stress-tester/encounter_stress_tester.py \
+            .github/session-kits/encounter-stress-tester/input.example.json
