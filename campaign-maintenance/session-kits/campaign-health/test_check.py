@@ -111,6 +111,9 @@ class HealthTests(unittest.TestCase):
         self.assertIn('/prep/0/reviewStatus', summary)
         self.assertEqual(checker.main(args), 1)
         self.assertEqual(first, (self.root / 'out/report.json').read_bytes())
+        self.assertEqual(checker.main(args[:-4] + ['--today', '2026-01-20']), 1)
+        summary = (self.root / 'out/summary.md').read_text(encoding='utf-8')
+        self.assertIn('[manifest.json](../manifest.json)', summary)
         self.assertEqual(checker.main(args[:-4] + ['--today', 'bad']), 2)
 
     def test_cli_missing_input_and_unknown_only(self):
@@ -131,6 +134,35 @@ class HealthTests(unittest.TestCase):
         self.assertEqual(checker.main(['--root', str(self.root), '--manifest', 'manifest.json',
                                        '--output-dir', 'out', '--today', '2026-01-20']), 2)
         self.assertEqual((self.root / 'note.md').read_text(encoding='utf-8'), 'fictional')
+
+    def test_output_hardlinks_to_manifest_or_referenced_source_are_rejected(self):
+        manifest = self.root / 'manifest.json'
+        manifest.write_text(json.dumps(self.data), encoding='utf-8')
+        (self.root / 'out').mkdir()
+        (self.root / 'out/report.json').hardlink_to(manifest)
+        original_manifest = manifest.read_bytes()
+        args = ['--root', str(self.root), '--manifest', 'manifest.json',
+                '--output-dir', 'out', '--today', '2026-01-20']
+        self.assertEqual(checker.main(args), 2)
+        self.assertEqual(manifest.read_bytes(), original_manifest)
+
+        (self.root / 'out/report.json').unlink()
+        (self.root / 'out/report.json').hardlink_to(self.root / 'note.md')
+        self.data['sessions'][0]['fileRefs'] = ['note.md']
+        manifest.write_text(json.dumps(self.data), encoding='utf-8')
+        original_source = (self.root / 'note.md').read_bytes()
+        self.assertEqual(checker.main(args), 2)
+        self.assertEqual((self.root / 'note.md').read_bytes(), original_source)
+
+    def test_output_path_matching_referenced_source_is_rejected(self):
+        self.data['sessions'][0]['fileRefs'] = ['out/report.json']
+        (self.root / 'out').mkdir()
+        output_file = self.root / 'out/report.json'
+        output_file.write_text('campaign source', encoding='utf-8')
+        self.run_check()
+        self.assertEqual(checker.main(['--root', str(self.root), '--manifest', 'manifest.json',
+                                       '--output-dir', 'out', '--today', '2026-01-20']), 2)
+        self.assertEqual(output_file.read_text(encoding='utf-8'), 'campaign source')
 
 
 if __name__ == '__main__':

@@ -4,6 +4,7 @@ import argparse
 import datetime as dt
 import errno
 import json
+import os
 import re
 import stat
 import sys
@@ -73,8 +74,10 @@ def checked_ids(items, where):
     return seen
 
 
-def check(root, manifest_path, today):
+def check(root, manifest_path, today, protected_paths=None):
     path = safe_path(root, manifest_path, 'manifest')
+    if protected_paths is not None:
+        protected_paths.append(path)
     try:
         with path.open(encoding='utf-8') as f:
             data = json.load(f, object_pairs_hook=unique_object)
@@ -105,6 +108,8 @@ def check(root, manifest_path, today):
 
     def file_check(value, pointer, missing_kind):
         p = safe_path(root, value, pointer)
+        if protected_paths is not None:
+            protected_paths.append(p)
         try:
             info = p.stat()
         except OSError as exc:
@@ -174,7 +179,7 @@ def unique_object(pairs):
     return result
 
 
-def render(report, base):
+def render(report, base, root, output):
     lines = ['# Campaign health (DM-only)', '', f"As of: {report['asOf']} (UTC date)",
              'Scope: supplied metadata and referenced local files only. Unknown is not a pass.', '']
     for state in ('confirmed', 'unknown'):
@@ -182,7 +187,12 @@ def render(report, base):
         lines += [f'## {state.title()} ({len(entries)})', '']
         for f in entries:
             source = f['source']
-            link = (base + '/' if base else '') + quote(source['path'], safe='/')
+            source_link = quote(source['path'], safe='/')
+            if base:
+                link = base + '/' + source_link
+            else:
+                relative_source = Path(os.path.relpath(root / source['path'], output)).as_posix()
+                link = quote(relative_source, safe='/')
             target = f" Target: `{f['target']}`." if 'target' in f else ''
             lines.append(f"- `{f['kind']}`: {f['detail']}{target} Source: [{source['path']}]({link}) `{source['pointer']}`.")
         if not entries:
@@ -210,16 +220,26 @@ def main(argv=None):
             if parts.scheme != 'https' or not parts.netloc or parts.username or parts.password or parts.query or parts.fragment or any(c in base for c in ' ()<>\n\r'):
                 fail('--source-base-url must be a plain HTTPS revision URL without credentials, query, or fragment')
         output = safe_path(root, args.output_dir, '--output-dir')
-        report = check(root, args.manifest, today)
+        protected_paths = []
+        report = check(root, args.manifest, today, protected_paths)
         for name in ('report.json', 'summary.md'):
             candidate = safe_path(root, args.output_dir + '/' + name, '--output-dir')
             if candidate.is_symlink():
                 fail('output files must not be symlinks')
-            if candidate.resolve() == safe_path(root, args.manifest, 'manifest').resolve():
-                fail('output must not overwrite manifest')
+            for protected in protected_paths:
+                if candidate.resolve() == protected.resolve():
+                    fail('output must not overwrite manifest or referenced source files')
+                try:
+                    same_file = candidate.samefile(protected)
+                except FileNotFoundError:
+                    same_file = False
+                except OSError as exc:
+                    fail(f'cannot safely inspect output path: {exc}')
+                if same_file:
+                    fail('output must not overwrite manifest or referenced source files')
         output.mkdir(parents=True, exist_ok=True)
         (output / 'report.json').write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8')
-        (output / 'summary.md').write_text(render(report, base), encoding='utf-8')
+        (output / 'summary.md').write_text(render(report, base, root, output), encoding='utf-8')
         return 1 if any(f['state'] == 'confirmed' for f in report['findings']) else 0
     except (InputError, OSError, ValueError) as exc:
         print(f'campaign-health: {exc}', file=sys.stderr)

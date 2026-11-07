@@ -81,8 +81,9 @@ The fixed report filenames are `.campaign-health-report/report.json` and
 `summary.md`; keep them private and remove or ignore them as appropriate. For
 clickable immutable source links, optionally pass `--source-base-url` followed by
 an HTTPS revision URL such as `https://github.com/OWNER/REPO/blob/COMMIT` (no
-credentials, query or fragment); without it, links are repository-relative.
-Reports are deterministic for the same manifest, file state, date, and URL.
+credentials, query or fragment); without it, links are relative to the report
+directory. Report outputs cannot overwrite the manifest or any referenced source
+file. Reports are deterministic for the same manifest, file state, date, and URL.
 Exit `0` means no **confirmed** findings, not that unknowns or unlisted data are
 healthy; `1` means confirmed findings; `2` means invalid/missing input, unsafe
 path, or output error. A failed run can leave an older report on disk; never
