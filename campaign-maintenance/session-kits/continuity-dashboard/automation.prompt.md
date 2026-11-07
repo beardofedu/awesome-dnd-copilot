@@ -141,5 +141,11 @@ Post one comment on the triggering issue only: marker, brief review warnings,
 and one complete JSON code block. Do not edit older comments, labels, files,
 automation settings, or other issues. If comment writing is unavailable in a
 manual session, clearly present the draft as unsaved in chat, not as posted.
+Before posting, measure the character length of the complete comment exactly as
+it will be submitted, including the marker, warnings, formatting, and the fully
+serialized JSON (including escaping in `snapshot.requestBody`). If it exceeds
+GitHub's 65,536-character issue-comment limit, do not post; explain the limit and
+request smaller inputs. Never truncate the JSON or alter or omit any part of the
+exact request body to fit.
 If a write has an uncertain outcome, stop without retrying and request that the
 DM inspect the issue. No approval or campaign update follows from a comment.
