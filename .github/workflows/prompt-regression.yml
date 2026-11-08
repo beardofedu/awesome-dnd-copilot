@@ -1,4 +1,4 @@
-name: Prompt regression contracts
+name: Library deterministic checks
 
 on:
   pull_request:
@@ -20,3 +20,35 @@ jobs:
         run: python3 -m unittest discover -s tools/prompt-regression/tests -v
       - name: Check fixtures and current source examples
         run: python3 tools/prompt-regression/run.py
+
+  resource-tests:
+    name: Tests / ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: installer-and-player-site
+            directory: tools/campaign-starter
+          - suite: session-note-importers
+            directory: campaign-maintenance/actions/session-note-importers/tests
+          - suite: campaign-health
+            directory: campaign-maintenance/session-kits/campaign-health
+          - suite: canon-consistency
+            directory: campaign-maintenance/session-kits/canon-consistency/tests
+          - suite: faction-world-clocks
+            directory: campaign-maintenance/session-kits/faction-world-clocks
+          - suite: player-safe-release
+            directory: campaign-maintenance/session-kits/player-safe-release
+          - suite: encounter-stress-tester
+            directory: running-campaign/session-kits/encounter-stress-tester/tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install importer dependencies
+        if: matrix.suite == 'session-note-importers'
+        run: python3 -m pip install -r campaign-maintenance/actions/session-note-importers/requirements.txt
+      - name: Run resource tests
+        run: python3 -m unittest discover -s "${{ matrix.directory }}" -p 'test_*.py' -v

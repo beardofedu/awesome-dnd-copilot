@@ -1,0 +1,73 @@
+:root {
+  color-scheme: light;
+  --paper: #f5f2e9;
+  --surface: #fffdf8;
+  --ink: #203831;
+  --muted: #4d6158;
+  --accent: #285642;
+  --border: #b6c1b3;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.container {
+  width: min(100% - 2rem, 68rem);
+  margin-inline: auto;
+}
+
+a { color: var(--accent); text-underline-offset: 0.2em; }
+a:hover { text-decoration-thickness: 0.15em; }
+:focus-visible { outline: 3px solid #98530b; outline-offset: 4px; }
+
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  transform: translateY(-200%);
+  z-index: 1;
+}
+
+.skip-link:focus { transform: translateY(0); }
+.site-header { background: var(--ink); color: var(--surface); padding-block: 1.5rem; }
+.brand { margin: 0 0 0.75rem; font-size: 1.4rem; font-weight: 750; }
+nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+nav a { color: var(--surface); padding: 0.5rem 0.75rem; border-radius: 0.3rem; }
+nav a[aria-current="page"] { background: var(--surface); color: var(--ink); font-weight: 700; }
+.site-header :focus-visible { outline-color: #ffcf80; }
+main { padding-block: 2rem; }
+section { margin-block: 2rem; }
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-family: Georgia, serif; font-size: clamp(2.2rem, 8vw, 4rem); margin-block: 1rem; }
+h2 { font-size: 1.6rem; }
+h3 { font-size: 1.2rem; }
+p, li { max-width: 72ch; }
+.hero { padding-block: 1rem; border-bottom: 2px solid var(--border); }
+.eyebrow { color: var(--muted); font-weight: 650; }
+.notice { background: #fff0cb; border-left: 4px solid #98530b; padding: 1rem; max-width: none; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1rem; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem; padding: 1.25rem; }
+.card h2, .card h3 { margin-top: 0; }
+.site-footer { color: var(--muted); border-top: 1px solid var(--border); padding-block: 1rem; }
+img { display: block; max-width: 100%; height: auto; }
+
+@media print {
+  body { background: white; color: black; font-size: 11pt; }
+  .site-header, .skip-link { display: none; }
+  .container { width: 100%; }
+  main { padding: 0; }
+  .grid { display: block; }
+  .card { break-inside: avoid; margin-block: 1rem; }
+  a { color: black; }
+}

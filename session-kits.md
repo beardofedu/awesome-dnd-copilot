@@ -1,8 +1,45 @@
-# Copilot App session kits
+# Session kit catalog and Copilot App setup
 
-Pick one kit, mix them, or install all three. Each kit contains a Canvas creation
-prompt, a cloud automation prompt and settings recipe, and fictional sample data.
-No dependency on the other kits or existing custom agents is required.
+Choose a kit for the task and audience you need. Kit contents vary: some are
+manual drafting prompts, some include deterministic Python checks, and some
+offer optional Canvases or cloud automation recipes. Read the selected kit's
+README rather than assuming a shared activation process.
+
+## Complete kit catalog
+
+| Kit | Purpose | Audience and setup |
+|---|---|---|
+| [Session Zero](campaign-creation/session-kits/session-zero/) | Draft an agreed campaign brief and proposed instructions | Shared, sanitized intake; manual prompt, optional automation |
+| [Adventure Playtester](campaign-creation/session-kits/adventure-playtester/) | Review adventure resilience and meaningful player choices | DM-only material; manual review prompt, no automation recipe |
+| [Campaign Health](campaign-maintenance/session-kits/campaign-health/) | Detect stale prep, notes, and operational gaps | DM; local Python check, optional workflow |
+| [Canon Consistency](campaign-maintenance/session-kits/canon-consistency/) | Validate a fact manifest and review contradictions | DM; local Python check and review prompt, optional workflow |
+| [Character Arc Weaver](campaign-maintenance/session-kits/character-arc-weaver/) | Propose hooks from player-approved character goals | DM; manual prompt, optional automation |
+| [Continuity Dashboard](campaign-maintenance/session-kits/continuity-dashboard/) | Review threads, source-backed continuity, and gaps | DM; Canvas prompt, optional automation |
+| [Faction Turns & World Clocks](campaign-maintenance/session-kits/faction-world-clocks/) | Draft faction turns and track reviewed world clocks | DM; local Python validator, optional automation |
+| [Party Journal & Quest Board](campaign-maintenance/session-kits/party-journal/) | Track known quests, inventory, discoveries, and plans | Players; Canvas prompt, optional automation in player repository |
+| [Player-safe Release](campaign-maintenance/session-kits/player-safe-release/) | Review and manually transfer exact-byte approved exports | Private DM review, separate player-repository validation |
+| [Player Submissions](campaign-maintenance/session-kits/player-submissions/) | Collect between-session ideas without deciding outcomes | Player form and optional acknowledgement; separate private DM-review add-on |
+| [Session Bridge](campaign-maintenance/session-kits/session-bridge/) | Draft recaps, continuity, and next-session follow-ups | DM; Canvas prompt, optional automation |
+| [DM Session Cockpit](running-campaign/session-kits/dm-session-cockpit/) | Prepare scene cards, references, initiative, and conditions | DM; Canvas prompt, optional automation |
+| [Encounter Stress Tester](running-campaign/session-kits/encounter-stress-tester/) | Estimate encounter pressure with explicit modeling limits | DM; local Python simulation, optional workflow and AI review |
+
+Every kit installs under `.github/session-kits/<kit>/` in the destination
+campaign repository. The [selective installer](tools/campaign-starter/README.md)
+lists committed complete kits and copies only selected resources. Workflow
+templates remain inside their kits until explicitly installed. Audience labels
+describe intended use; they do not enforce access control.
+
+Related resources: [player-site scaffold](campaign-creation/templates/campaign-player-site/),
+[DM and player workspace installer](tools/campaign-starter/README.md), and
+[source-specific session-note importers](campaign-maintenance/actions/session-note-importers/).
+See the root README's [placement table](README.md#installation-destinations-and-activation)
+for templates, prompts, agents, and workflow destinations.
+
+## Three Canvas starter kits
+
+The setup below applies specifically to these three kits. Each contains a
+Canvas creation prompt, cloud automation prompt and settings recipe, and
+fictional sample data. They do not depend on each other or on custom agents.
 
 | Kit | Use it for | Audience |
 |---|---|---|

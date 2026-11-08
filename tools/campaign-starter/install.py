@@ -11,6 +11,8 @@ import sys
 
 SOURCE = Path(__file__).absolute().parents[2]
 TEMPLATE = PurePosixPath("campaign-creation/templates/campaign-starter")
+PLAYER_TEMPLATE = PurePosixPath("campaign-creation/templates/player-starter")
+SITE_TEMPLATE = PurePosixPath("campaign-creation/templates/campaign-player-site")
 FILE_REFERENCE = re.compile(r"`([A-Za-z0-9_][A-Za-z0-9_./-]*)`")
 
 
@@ -85,7 +87,7 @@ def discover(source):
     except (OSError, subprocess.CalledProcessError) as exc:
         raise InstallError(f"Cannot enumerate committed source files: {exc}") from exc
     paths = [clean_relative(os.fsdecode(p)) for p in result.stdout.split(b"\0") if p]
-    profiles, agents, kits, starter = {}, {}, {}, []
+    profiles, agents, kits, starter, player_starter, player_site = {}, {}, {}, [], [], []
     for path in paths:
         parts = path.parts
         if len(parts) == 2 and parts[1] == "copilot-instructions.md" and not parts[0].startswith("."):
@@ -96,11 +98,20 @@ def discover(source):
             kits.setdefault(f"{parts[0]}/{parts[2]}", []).append(path)
         elif path.is_relative_to(TEMPLATE) and path != TEMPLATE:
             starter.append(path)
+        elif path.is_relative_to(PLAYER_TEMPLATE) and path != PLAYER_TEMPLATE:
+            player_starter.append(path)
+        elif path.is_relative_to(SITE_TEMPLATE / "docs") or path == SITE_TEMPLATE / "customize.prompt.md":
+            player_site.append(path)
     kits = {name: files for name, files in kits.items() if complete_kit(Path(source), files)}
-    return profiles, agents, kits, starter
+    return profiles, agents, kits, starter, player_starter, player_site
 
 
-def plan(source, destination, profile, agent_names, kit_names, with_starter):
+def plan(source, destination, profile, agent_names, kit_names, with_starter,
+         with_player_starter=False, with_player_site=False):
+    if (with_player_starter or with_player_site) and (profile is not None or with_starter):
+        raise InstallError("Player templates cannot be combined with a DM --profile or --starter")
+    if profile is None and not (with_player_starter or with_player_site):
+        raise InstallError("Select a --profile, --player-starter, or --player-site")
     if ".." in Path(destination).parts or ".." in Path(source).parts:
         raise InstallError("Traversal in source or destination is not allowed")
     source = Path(os.path.abspath(source))
@@ -115,10 +126,12 @@ def plan(source, destination, profile, agent_names, kit_names, with_starter):
     if (destination in protected or any(p == destination or p in destination.parents for p in system_trees)
             or destination == source or source in destination.parents or destination in source.parents):
         raise InstallError("Unsafe destination: choose a separate campaign directory, not a system root or source tree")
-    profiles, agents, kits, starter = discover(source)
-    if profile not in profiles:
-        raise InstallError(f"Unknown profile: {profile}")
-    mappings = [(profiles[profile], PurePosixPath(".github/copilot-instructions.md"))]
+    profiles, agents, kits, starter, player_starter, player_site = discover(source)
+    mappings = []
+    if profile is not None:
+        if profile not in profiles:
+            raise InstallError(f"Unknown profile: {profile}")
+        mappings.append((profiles[profile], PurePosixPath(".github/copilot-instructions.md")))
     for name in agent_names:
         if name not in agents:
             raise InstallError(f"Unknown agent: {name}")
@@ -133,6 +146,29 @@ def plan(source, destination, profile, agent_names, kit_names, with_starter):
         if not starter:
             raise InstallError("No committed starter template found")
         mappings.extend((path, path.relative_to(TEMPLATE)) for path in starter)
+    if with_player_starter:
+        if not player_starter:
+            raise InstallError("No committed player starter template found")
+        required = {"README.md", "campaign.md", ".github/copilot-instructions.md",
+                    "journal/README.md", "quests/README.md", "world/README.md"}
+        names = {path.relative_to(PLAYER_TEMPLATE).as_posix() for path in player_starter}
+        if required - names:
+            raise InstallError(f"Incomplete player starter: missing {', '.join(sorted(required - names))}")
+        mappings.extend((path, path.relative_to(PLAYER_TEMPLATE)) for path in player_starter)
+    if with_player_site:
+        if not player_site:
+            raise InstallError("No committed player site template found")
+        required = {"customize.prompt.md", "docs/.nojekyll", "docs/assets/style.css",
+                    "docs/index.html", "docs/party.html", "docs/journal.html",
+                    "docs/world.html", "docs/rules.html", "docs/safety.html"}
+        names = {path.relative_to(SITE_TEMPLATE).as_posix() for path in player_site}
+        if required - names:
+            raise InstallError(f"Incomplete player site: missing {', '.join(sorted(required - names))}")
+        for path in player_site:
+            target = (PurePosixPath(".github/prompts/customize-campaign-site.prompt.md")
+                      if path == SITE_TEMPLATE / "customize.prompt.md"
+                      else path.relative_to(SITE_TEMPLATE))
+            mappings.append((path, target))
     entries, targets = [], set()
     for src_rel, dst_rel in mappings:
         clean_relative(str(src_rel))
@@ -207,23 +243,34 @@ def main(argv=None):
     parser.add_argument("--agent", action="append", default=[], help="agent identifier; repeatable")
     parser.add_argument("--kit", action="append", default=[], help="complete kit identifier; repeatable")
     parser.add_argument("--starter", action="store_true", help="include the empty campaign starter")
+    parser.add_argument("--player-starter", action="store_true",
+                        help="include an empty player workspace and player instructions, without a DM profile")
+    parser.add_argument("--player-site", action="store_true",
+                        help="include docs/ and a customization prompt; does not enable Pages")
     parser.add_argument("--apply", action="store_true", help="write files; default is preview")
     args = parser.parse_args(argv)
     try:
         if args.list:
-            if args.destination or args.profile or args.agent or args.kit or args.starter or args.apply:
+            if (args.destination or args.profile or args.agent or args.kit or args.starter
+                    or args.player_starter or args.player_site or args.apply):
                 raise InstallError("--list cannot be combined with installation options")
-            profiles, agents, kits, _ = discover(SOURCE)
+            profiles, agents, kits, starter, player_starter, player_site = discover(SOURCE)
             for label, items in (("Profiles", profiles), ("Agents", agents), ("Complete kits", kits)):
                 print(f"{label}:")
                 for name in sorted(items):
                     print(f"  {name}")
+            print("Templates:")
+            for name, files in (("--starter (requires --profile)", starter),
+                                ("--player-starter", player_starter), ("--player-site", player_site)):
+                if files:
+                    print(f"  {name}")
             return 0
-        if not args.destination or not args.profile:
-            raise InstallError("A destination and exactly one --profile are required")
-        if sum(1 for arg in (argv if argv is not None else sys.argv[1:]) if arg == "--profile" or arg.startswith("--profile=")) != 1:
+        if not args.destination:
+            raise InstallError("A destination is required")
+        if sum(1 for arg in (argv if argv is not None else sys.argv[1:]) if arg == "--profile" or arg.startswith("--profile=")) > 1:
             raise InstallError("Specify --profile exactly once")
-        entries = plan(SOURCE, args.destination, args.profile, args.agent, args.kit, args.starter)
+        entries = plan(SOURCE, args.destination, args.profile, args.agent, args.kit, args.starter,
+                       args.player_starter, args.player_site)
         print("Apply:" if args.apply else "Preview (no files written):")
         for src, dst, _ in entries:
             print(f"  {src} -> {dst}")

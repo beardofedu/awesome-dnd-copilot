@@ -32,6 +32,19 @@ class InstallerTests(unittest.TestCase):
         self.add_kit("first")
         self.add_kit("other")
         self.write("campaign-creation/templates/campaign-starter/canon/README.md", "empty")
+        self.write("campaign-creation/templates/player-starter/.github/copilot-instructions.md", "players only")
+        self.write("campaign-creation/templates/player-starter/journal/README.md", "approved recaps")
+        self.write("campaign-creation/templates/player-starter/README.md", "player workspace")
+        self.write("campaign-creation/templates/player-starter/campaign.md", "shared metadata")
+        self.write("campaign-creation/templates/player-starter/quests/README.md", "known quests")
+        self.write("campaign-creation/templates/player-starter/world/README.md", "discovered world")
+        self.write("campaign-creation/templates/campaign-player-site/README.md", "library setup guide")
+        self.write("campaign-creation/templates/campaign-player-site/customize.prompt.md", "customize")
+        self.write("campaign-creation/templates/campaign-player-site/docs/index.html", "fictional hub")
+        self.write("campaign-creation/templates/campaign-player-site/docs/.nojekyll", "")
+        self.write("campaign-creation/templates/campaign-player-site/docs/assets/style.css", "styles")
+        for name in ("party", "journal", "world", "rules", "safety"):
+            self.write(f"campaign-creation/templates/campaign-player-site/docs/{name}.html", name)
         self.commit()
 
     def git(self, *args):
@@ -83,6 +96,70 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.dest / ".github/copilot-instructions.md").exists())
         self.assertEqual(agent.read_text(), "agent")
         self.assertEqual(unrelated.read_text(), "keep")
+
+    def test_player_templates_preview_and_install_without_dm_files_or_activation(self):
+        with mock.patch.object(installer, "SOURCE", self.source), contextlib.redirect_stdout(io.StringIO()):
+            args = [str(self.dest), "--player-starter", "--player-site"]
+            self.assertEqual(installer.main(args), 0)
+            self.assertEqual(list(self.dest.iterdir()), [])
+            self.assertEqual(installer.main(args + ["--apply"]), 0)
+        self.assertEqual((self.dest / ".github/copilot-instructions.md").read_text(), "players only")
+        self.assertTrue((self.dest / "journal/README.md").is_file())
+        self.assertTrue((self.dest / "docs/.nojekyll").is_file())
+        self.assertEqual((self.dest / "docs/assets/style.css").read_text(), "styles")
+        self.assertEqual((self.dest / ".github/prompts/customize-campaign-site.prompt.md").read_text(),
+                         "customize")
+        self.assertFalse((self.dest / "canon").exists())
+        self.assertFalse((self.dest / ".github/workflows").exists())
+        self.assertEqual((self.dest / "README.md").read_text(), "player workspace")
+
+    def test_site_only_preserves_existing_player_instructions(self):
+        instructions = self.dest / ".github/copilot-instructions.md"
+        instructions.parent.mkdir()
+        instructions.write_text("existing player instructions")
+        entries = installer.plan(self.source, self.dest, None, [], [], False,
+                                 with_player_site=True)
+        installer.apply(entries, self.dest)
+        self.assertEqual(instructions.read_text(), "existing player instructions")
+        self.assertTrue((self.dest / "docs/index.html").is_file())
+        self.assertFalse((self.dest / "journal").exists())
+
+    def test_player_templates_reject_dm_combinations_and_existing_site_before_writes(self):
+        for player_starter, player_site in ((True, False), (False, True), (True, True)):
+            with self.subTest(player_starter=player_starter, player_site=player_site):
+                with self.assertRaisesRegex(installer.InstallError, "cannot be combined"):
+                    installer.plan(self.source, self.dest, "campaign-creation", [], [], False,
+                                   player_starter, player_site)
+                with self.assertRaisesRegex(installer.InstallError, "cannot be combined"):
+                    installer.plan(self.source, self.dest, None, [], [], True,
+                                   player_starter, player_site)
+        page = self.dest / "docs/index.html"
+        page.parent.mkdir()
+        page.write_text("keep")
+        with self.assertRaisesRegex(installer.InstallError, "already exists"):
+            installer.plan(self.source, self.dest, None, [], [], False, True, True)
+        self.assertEqual(page.read_text(), "keep")
+        self.assertFalse((self.dest / ".github").exists())
+
+    def test_player_site_symlink_and_missing_committed_templates_are_rejected(self):
+        (self.dest / "docs").symlink_to(self.root, target_is_directory=True)
+        with self.assertRaisesRegex(installer.InstallError, "Symlink"):
+            installer.plan(self.source, self.dest, None, [], [], False, with_player_site=True)
+        (self.dest / "docs").unlink()
+        self.git("rm", "-qr", "campaign-creation/templates/campaign-player-site")
+        self.commit()
+        with self.assertRaisesRegex(installer.InstallError, "No committed player site"):
+            installer.plan(self.source, self.dest, None, [], [], False, with_player_site=True)
+
+    def test_incomplete_player_templates_do_not_install_a_partial_workspace_or_site(self):
+        self.git("rm", "campaign-creation/templates/player-starter/.github/copilot-instructions.md",
+                 "campaign-creation/templates/campaign-player-site/docs/party.html")
+        self.commit()
+        for option in ("with_player_starter", "with_player_site"):
+            with self.subTest(option=option):
+                with self.assertRaisesRegex(installer.InstallError, "Incomplete player"):
+                    installer.plan(self.source, self.dest, None, [], [], False, **{option: True})
+        self.assertEqual(list(self.dest.iterdir()), [])
 
     def test_rejects_source_and_destination_symlinks_and_traversal(self):
         (self.dest / ".github").symlink_to(self.root, target_is_directory=True)
