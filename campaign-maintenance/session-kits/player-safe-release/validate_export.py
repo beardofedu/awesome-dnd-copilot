@@ -2,6 +2,7 @@
 """Validate manifest format and exact bytes in a local player-safe export."""
 
 import argparse
+from datetime import date
 import hashlib
 import json
 import re
@@ -55,6 +56,10 @@ def _validate_manifest(manifest):
         raise ValidationError("approval.approved_by must be a non-empty string")
     if not isinstance(approval["approved_on"], str) or not DATE_RE.fullmatch(approval["approved_on"]):
         raise ValidationError("approval.approved_on must use YYYY-MM-DD format")
+    try:
+        date.fromisoformat(approval["approved_on"])
+    except ValueError as error:
+        raise ValidationError("approval.approved_on must be a valid calendar date") from error
 
     files = manifest["files"]
     if not isinstance(files, list) or not files:
