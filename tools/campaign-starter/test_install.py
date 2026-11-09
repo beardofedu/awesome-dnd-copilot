@@ -25,6 +25,7 @@ class InstallerTests(unittest.TestCase):
         self.git("init", "-q")
         self.git("config", "user.name", "Test")
         self.git("config", "user.email", "test@example.invalid")
+        self.write("LICENSE", "MIT notice")
         self.write("campaign-creation/copilot-instructions.md", "profile")
         self.write("campaign-maintenance/copilot-instructions.md", "other profile")
         self.write("campaign-creation/agents/world-builder.md", "agent")
@@ -84,6 +85,7 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.dest / ".github/session-kits/other").exists())
         self.assertFalse((self.dest / ".github/workflows").exists())
         self.assertTrue((self.dest / "canon/README.md").exists())
+        self.assertEqual((self.dest / "LICENSE").read_text(), "MIT notice")
 
     def test_conflict_prevents_all_writes_even_identical_and_preserves_unrelated(self):
         agent = self.dest / ".github/agents/world-builder.md"
@@ -112,6 +114,7 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.dest / "canon").exists())
         self.assertFalse((self.dest / ".github/workflows").exists())
         self.assertEqual((self.dest / "README.md").read_text(), "player workspace")
+        self.assertEqual((self.dest / "LICENSE").read_text(), "MIT notice")
 
     def test_site_only_preserves_existing_player_instructions(self):
         instructions = self.dest / ".github/copilot-instructions.md"

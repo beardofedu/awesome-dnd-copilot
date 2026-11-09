@@ -13,6 +13,9 @@ other filenames. All tracked files beneath the selected kit are copied.
 Discovery checks these structural signals, not semantic completeness; review
 the kit's instructions and contents before use. Source and destination must
 not contain symlink components; selected source files must be ordinary files.
+Every installation also includes the root `LICENSE`; retain it when sharing
+copied original material. For manual copies, follow the
+[attribution guidance](../../ATTRIBUTION.md).
 
 ```bash
 # Discover exact identifiers in this checkout.

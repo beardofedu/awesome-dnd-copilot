@@ -19,6 +19,12 @@ or a license that allows it. When referencing external material, link to its
 authorized source and identify any applicable license or attribution
 requirements.
 
+The selective installer includes the root `LICENSE` in every workspace. When
+copying or distributing original material manually, include that license file
+or retain its copyright and permission notices in a clear accompanying notice.
+Check and preserve any separate attribution or license requirements for
+third-party material.
+
 Examples and sample campaign details are fictional. Contributors should not
 include real campaign secrets, personal information, credentials, or private
 content from players.

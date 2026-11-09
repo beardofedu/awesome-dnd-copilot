@@ -23,7 +23,10 @@ python3 tools/campaign-starter/install.py /path/to/brackenmere-dm \
 
 Review the preview, then repeat the command with `--apply`. The installer
 copies selected local files; it does not create GitHub repositories, change
-access, or activate services. Keep the DM workspace private to the DM team.
+access, or activate services. It also copies the repository's `LICENSE`; keep
+it with the workspace. For manual copies, follow the
+[attribution guidance](../../ATTRIBUTION.md). Keep the DM workspace private to
+the DM team.
 
 Create a separate player workspace and preview its starter and website:
 
