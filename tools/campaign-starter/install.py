@@ -184,6 +184,13 @@ def plan(source, destination, profile, agent_names, kit_names, with_starter,
             raise InstallError(f"Multiple selections target {dst}")
         targets.add(dst)
         if dst.exists():
+            if src_rel == license_path and dst_rel == license_path:
+                try:
+                    same_license = dst.is_file() and dst.read_bytes() == src.read_bytes()
+                except OSError as exc:
+                    raise InstallError(f"Cannot compare existing license {dst}: {exc}") from exc
+                if same_license:
+                    continue
             raise InstallError(f"Destination already exists: {dst}")
         parent = dst.parent
         while parent != destination:
@@ -257,7 +264,7 @@ def main(argv=None):
             if (args.destination or args.profile or args.agent or args.kit or args.starter
                     or args.player_starter or args.player_site or args.apply):
                 raise InstallError("--list cannot be combined with installation options")
-            profiles, agents, kits, starter, player_starter, player_site = discover(SOURCE)
+            profiles, agents, kits, starter, player_starter, player_site, _ = discover(SOURCE)
             for label, items in (("Profiles", profiles), ("Agents", agents), ("Complete kits", kits)):
                 print(f"{label}:")
                 for name in sorted(items):

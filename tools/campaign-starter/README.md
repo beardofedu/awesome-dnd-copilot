@@ -71,14 +71,16 @@ fictional, not approved canon. The installer does not create a GitHub repository
 change permissions, contact a network, or create/activate cloud resources.
 
 Every target is preflighted before writing. Existing target files conflict even
-if identical; nothing is overwritten, and unrelated destination files are left
-alone. On a write error the installer attempts to remove only files and empty
-directories it created, reporting incomplete rollback. Preview is not a
-reservation: rerun it if the checkout or destination changes. Use a trusted,
-quiescent local checkout and destination; protection against concurrent malicious
-filesystem changes is not provided. No installation can guarantee available disk
-space or write permission in advance. If an error reports incomplete rollback,
-inspect the listed paths manually.
+if identical, except that an identical root `LICENSE` is reused without
+rewriting it when adding resources to an existing workspace. Nothing else is
+overwritten, and unrelated destination files are left alone. On a write error
+the installer attempts to remove only files and empty directories it created,
+reporting incomplete rollback. Preview is not a reservation: rerun it if the
+checkout or destination changes. Use a trusted, quiescent local checkout and
+destination; protection against concurrent malicious filesystem changes is not
+provided. No installation can guarantee available disk space or write
+permission in advance. If an error reports incomplete rollback, inspect the
+listed paths manually.
 
 The DM must arrange suitable private repository access separately. Folder names
 are not access controls. Export only reviewed player-safe material to a separate
