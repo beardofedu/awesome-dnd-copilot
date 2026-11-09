@@ -15,6 +15,20 @@ repository root, and website files go in `docs/`. See the placement table below.
 | [`campaign-maintenance/`](./campaign-maintenance/) | Track story arcs, manage session notes, and keep lore consistent |
 | [`running-campaign/`](./running-campaign/) | Run sessions, improvise encounters, voice NPCs, and narrate scenes |
 
+## Choose a starting point
+
+| If you want to... | Start here |
+|---|---|
+| Create a world, campaign brief, or adventure | [`campaign-creation/`](./campaign-creation/) |
+| Keep notes, canon, arcs, or factions consistent | [`campaign-maintenance/`](./campaign-maintenance/) |
+| Prepare or run a session | [`running-campaign/`](./running-campaign/) |
+| Give players a separate, reviewed workspace or website | [Player starter](./campaign-creation/templates/player-starter/) and [player-site guide](./campaign-creation/templates/campaign-player-site/) |
+| See the resources used together from setup through sharing | [First campaign walkthrough](./examples/first-campaign/README.md) |
+
+New to the library? Read the [compatibility guide](./COMPATIBILITY.md) before
+choosing a resource. Availability for Copilot features depends on your account,
+repository, and organization settings.
+
 ## Start a campaign workspace
 
 Use the [campaign starter and selective installer](./tools/campaign-starter/README.md)
@@ -169,4 +183,7 @@ Static checks do not prove prompt quality, factual accuracy, or spoiler safety.
 
 ## Contributing
 
-Feel free to open a PR with your own Copilot instruction files and agents! The goal is to grow a high-quality library of D&D-focused AI tools.
+Contributions are welcome. Read the [contribution guide](./CONTRIBUTING.md)
+before opening an issue or pull request. This repository is licensed under the
+[MIT License](./LICENSE); see [attribution and third-party content guidance](./ATTRIBUTION.md)
+for the scope of that license and references to Dungeons & Dragons.

@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a problem with an instruction, agent, kit, template, or tool.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include campaign secrets, player personal information, credentials, or private repository contents.
+  - type: input
+    id: resource
+    attributes:
+      label: Resource
+      description: Link to the affected file or name the resource.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect the resource or tool to do?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead? Share only sanitized details.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include the relevant Copilot surface, setup steps, and sanitized inputs.
+    validations:
+      required: false

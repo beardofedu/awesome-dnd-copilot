@@ -25,6 +25,7 @@ class InstallerTests(unittest.TestCase):
         self.git("init", "-q")
         self.git("config", "user.name", "Test")
         self.git("config", "user.email", "test@example.invalid")
+        self.write("LICENSE", "MIT notice")
         self.write("campaign-creation/copilot-instructions.md", "profile")
         self.write("campaign-maintenance/copilot-instructions.md", "other profile")
         self.write("campaign-creation/agents/world-builder.md", "agent")
@@ -84,6 +85,7 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.dest / ".github/session-kits/other").exists())
         self.assertFalse((self.dest / ".github/workflows").exists())
         self.assertTrue((self.dest / "canon/README.md").exists())
+        self.assertEqual((self.dest / "LICENSE").read_text(), "MIT notice")
 
     def test_conflict_prevents_all_writes_even_identical_and_preserves_unrelated(self):
         agent = self.dest / ".github/agents/world-builder.md"
@@ -112,6 +114,36 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.dest / "canon").exists())
         self.assertFalse((self.dest / ".github/workflows").exists())
         self.assertEqual((self.dest / "README.md").read_text(), "player workspace")
+        self.assertEqual((self.dest / "LICENSE").read_text(), "MIT notice")
+
+    def test_player_starter_then_site_reuses_identical_license(self):
+        with mock.patch.object(installer, "SOURCE", self.source), contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(installer.main([str(self.dest), "--player-starter", "--apply"]), 0)
+            self.assertEqual(installer.main([str(self.dest), "--player-site", "--apply"]), 0)
+        self.assertEqual((self.dest / "LICENSE").read_text(), "MIT notice")
+        self.assertTrue((self.dest / "docs/index.html").is_file())
+
+    def test_existing_license_must_be_identical_and_not_a_symlink(self):
+        license_file = self.dest / "LICENSE"
+        license_file.write_text("MIT notice")
+        entries = installer.plan(self.source, self.dest, None, [], [], False,
+                                 with_player_site=True)
+        self.assertNotIn(license_file, [dst for _, dst, _ in entries])
+
+        license_file.write_text("different notice")
+        with self.assertRaisesRegex(installer.InstallError, "Destination already exists"):
+            installer.plan(self.source, self.dest, None, [], [], False, with_player_site=True)
+
+        license_file.unlink()
+        license_file.symlink_to(self.source / "LICENSE")
+        with self.assertRaisesRegex(installer.InstallError, "Symlink"):
+            installer.plan(self.source, self.dest, None, [], [], False, with_player_site=True)
+
+    def test_list_cli_handles_all_discovery_results(self):
+        with mock.patch.object(installer, "SOURCE", self.source), contextlib.redirect_stdout(
+                io.StringIO()) as output:
+            self.assertEqual(installer.main(["--list"]), 0)
+        self.assertIn("Profiles:", output.getvalue())
 
     def test_site_only_preserves_existing_player_instructions(self):
         instructions = self.dest / ".github/copilot-instructions.md"

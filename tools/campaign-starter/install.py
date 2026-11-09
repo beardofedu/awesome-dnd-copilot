@@ -87,6 +87,9 @@ def discover(source):
     except (OSError, subprocess.CalledProcessError) as exc:
         raise InstallError(f"Cannot enumerate committed source files: {exc}") from exc
     paths = [clean_relative(os.fsdecode(p)) for p in result.stdout.split(b"\0") if p]
+    license_path = PurePosixPath("LICENSE")
+    if license_path not in paths:
+        raise InstallError("No committed root LICENSE found")
     profiles, agents, kits, starter, player_starter, player_site = {}, {}, {}, [], [], []
     for path in paths:
         parts = path.parts
@@ -103,7 +106,7 @@ def discover(source):
         elif path.is_relative_to(SITE_TEMPLATE / "docs") or path == SITE_TEMPLATE / "customize.prompt.md":
             player_site.append(path)
     kits = {name: files for name, files in kits.items() if complete_kit(Path(source), files)}
-    return profiles, agents, kits, starter, player_starter, player_site
+    return profiles, agents, kits, starter, player_starter, player_site, license_path
 
 
 def plan(source, destination, profile, agent_names, kit_names, with_starter,
@@ -126,8 +129,8 @@ def plan(source, destination, profile, agent_names, kit_names, with_starter,
     if (destination in protected or any(p == destination or p in destination.parents for p in system_trees)
             or destination == source or source in destination.parents or destination in source.parents):
         raise InstallError("Unsafe destination: choose a separate campaign directory, not a system root or source tree")
-    profiles, agents, kits, starter, player_starter, player_site = discover(source)
-    mappings = []
+    profiles, agents, kits, starter, player_starter, player_site, license_path = discover(source)
+    mappings = [(license_path, license_path)]
     if profile is not None:
         if profile not in profiles:
             raise InstallError(f"Unknown profile: {profile}")
@@ -181,6 +184,13 @@ def plan(source, destination, profile, agent_names, kit_names, with_starter,
             raise InstallError(f"Multiple selections target {dst}")
         targets.add(dst)
         if dst.exists():
+            if src_rel == license_path and dst_rel == license_path:
+                try:
+                    same_license = dst.is_file() and dst.read_bytes() == src.read_bytes()
+                except OSError as exc:
+                    raise InstallError(f"Cannot compare existing license {dst}: {exc}") from exc
+                if same_license:
+                    continue
             raise InstallError(f"Destination already exists: {dst}")
         parent = dst.parent
         while parent != destination:
@@ -254,7 +264,7 @@ def main(argv=None):
             if (args.destination or args.profile or args.agent or args.kit or args.starter
                     or args.player_starter or args.player_site or args.apply):
                 raise InstallError("--list cannot be combined with installation options")
-            profiles, agents, kits, starter, player_starter, player_site = discover(SOURCE)
+            profiles, agents, kits, starter, player_starter, player_site, _ = discover(SOURCE)
             for label, items in (("Profiles", profiles), ("Agents", agents), ("Complete kits", kits)):
                 print(f"{label}:")
                 for name in sorted(items):
