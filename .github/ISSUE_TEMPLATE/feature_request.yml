@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a resource or improvement for the library.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the need, not confidential campaign details. Use fictional or sanitized examples.
+  - type: textarea
+    id: need
+    attributes:
+      label: Need or use case
+      description: Who would use this, and what task would it help with?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What would you like added or improved?
+    validations:
+      required: true
+  - type: textarea
+    id: audience
+    attributes:
+      label: Audience and compatibility
+      description: Is this for DMs, players, or both? Does it depend on a particular Copilot feature or external service?
+    validations:
+      required: false
