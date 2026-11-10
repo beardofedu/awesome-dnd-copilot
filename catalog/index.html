@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find Dungeons &amp; Dragons Copilot resources by campaign phase, audience, setup type, and feature.">
+  <title>D&amp;D Copilot resource catalog</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="catalog.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#results">Skip to resources</a>
+  <header>
+    <p class="eyebrow">awesome-dnd-copilot</p>
+    <h1>Find your next campaign tool</h1>
+    <p>Original D&amp;D instructions, agents, session kits, and workspace starters.
+      Choose a resource, then follow its source file for setup.</p>
+    <nav aria-label="Library">
+      <a href="https://github.com/beardofedu/awesome-dnd-copilot">Repository</a>
+      <a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/COMPATIBILITY.md">Compatibility guide</a>
+      <a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/session-kits.md">Session kit setup</a>
+    </nav>
+  </header>
+  <main>
+    <aside aria-label="Before you choose">
+      <p><strong>Audience labels are not access controls.</strong> Keep DM secrets in a
+        separate DM-only repository. Player resources use reviewed information only.
+        Resources tagged for both audiences may require separate repositories.</p>
+      <p>Copying files activates nothing. Canvas generation, optional cloud automation,
+        Actions workflows, and website publication require separate setup and approval.
+        Feature availability varies; read the compatibility guide. "No Copilot required"
+        means a local or non-AI part can work independently, not that every part does.</p>
+    </aside>
+    <form id="filters" role="search" aria-label="Filter resources" hidden>
+      <label class="search" for="query">Search resources
+        <input id="query" name="query" type="search" placeholder="Try recaps, NPCs, canon, or quests"
+          aria-describedby="filter-help" autocomplete="off">
+      </label>
+      <fieldset>
+        <legend>Narrow your choices</legend>
+        <div class="filter-grid">
+<label for="phase">Campaign phase<select id="phase" name="phase"><option value="">All</option><option>Campaign creation</option><option>Campaign maintenance</option><option>Running a campaign</option></select></label>
+<label for="audience">Audience<select id="audience" name="audience"><option value="">All</option><option>DM</option><option>Players</option><option>Shared table</option></select></label>
+<label for="setup">Setup type<select id="setup" name="setup"><option value="">All</option><option>Canvas generation</option><option>Copy-in agent</option><option>Copy-in instructions</option><option>Issue form</option><option>Local Python</option><option>Manual prompt</option><option>Optional Actions workflow</option><option>Optional cloud automation</option><option>Read-through guide</option><option>Static site scaffold</option><option>Workspace template</option></select></label>
+<label for="feature">Copilot feature<select id="feature" name="feature"><option value="">All</option><option>Canvas</option><option>Chat prompts</option><option>Cloud automations</option><option>Custom agents</option><option>No Copilot required</option><option>Repository instructions</option></select></label>
+        </div>
+      </fieldset>
+      <p id="filter-help">Search titles, descriptions, tags, and source paths.
+        Filters combine; optional features do not become requirements.</p>
+      <button type="reset">Clear all filters</button>
+    </form>
+    <noscript><p>JavaScript is off. All resources are listed below; use your browser's Find command to search.</p></noscript>
+    <section id="results" aria-labelledby="results-heading" tabindex="-1">
+      <h2 id="results-heading">Resources</h2>
+      <p id="result-count" role="status" aria-live="polite" aria-atomic="true">36 resources</p>
+      <p id="empty" hidden>No resources match. Try a broader search or clear all filters.</p>
+      <ul class="resources">
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/agents/adventure-designer.md">Adventure Designer</a></h3>
+  <p>Designs D&amp;D adventures, quests, and encounters with satisfying narrative structure, meaningful player choices, and thematic depth. Use this agent to plan full adventures or individual sessions.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-creation/agents/adventure-designer.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/agents/adventure-playtester.md">Adventure Playtester</a></h3>
+  <p>Stress-tests a bounded D&amp;D adventure revision for brittle clues, blocked objectives, and counterfactual player paths without editing canon.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-creation/agents/adventure-playtester.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Manual prompt" data-feature="Chat prompts">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/session-kits/adventure-playtester/README.md">Adventure Playtester</a></h3>
+  <p>A DM-only, read-only review kit for stress-testing one adventure revision before play. It looks for brittle clue paths, fragile NPC dependencies, inaccessible goals, unsupported rules assumptions, thin choices, pacing/recovery problems, and scenes whose required/optional status is unclear. It proposes small, concrete alternatives for the DM to consider; it does not rewrite the adventure, change canon, or claim to replace human playtesting.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt</dd></div><div><dt>Copilot</dt><dd>Chat prompts</dd></div></dl>
+  <p class="source">campaign-creation/session-kits/adventure-playtester/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="Players" data-setup="Static site scaffold|Manual prompt" data-feature="Chat prompts|No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/templates/campaign-player-site/README.md">Campaign player site</a></h3>
+  <p>A reusable, plain HTML/CSS player hub for any D&amp;D 5e campaign. No framework, build step, external fonts, analytics, or JavaScript is required. The Wayfarer&#x27;s Table content is fictional demonstration material, not your campaign&#x27;s canon.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>Players</dd></div><div><dt>Setup</dt><dd>Static site scaffold, Manual prompt</dd></div><div><dt>Copilot</dt><dd>Chat prompts, No Copilot required</dd></div></dl>
+  <p class="source">campaign-creation/templates/campaign-player-site/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Workspace template" data-feature="No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/templates/campaign-starter/README.md">Campaign workspace</a></h3>
+  <p>This is an empty starting structure, not approved campaign canon. Keep this repository accessible only to the DM and trusted co-DMs; folders do not enforce access control. A local directory or this template does not create a repository or change its permissions.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Workspace template</dd></div><div><dt>Copilot</dt><dd>No Copilot required</dd></div></dl>
+  <p class="source">campaign-creation/templates/campaign-starter/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Copy-in instructions" data-feature="Repository instructions">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/copilot-instructions.md">Copilot Instructions — Campaign Creation</a></h3>
+  <p>You are an expert Dungeon Master assistant specializing in creating original Dungeons &amp; Dragons campaigns. Your role is to help design rich, coherent, and engaging campaigns from the ground up.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in instructions</dd></div><div><dt>Copilot</dt><dd>Repository instructions</dd></div></dl>
+  <p class="source">campaign-creation/copilot-instructions.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation|Campaign maintenance|Running a campaign" data-audience="DM|Players" data-setup="Local Python" data-feature="No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/tools/campaign-starter/README.md">DM/player campaign starter and selective installer</a></h3>
+  <p>From the root of a checkout of this library, use Python 3.9+ and Git. The installer reads tracked paths from the current checkout&#x27;s HEAD, including newly committed profiles, agents, complete session kits, and workspace/site templates. It copies local working-tree contents for those paths: review local changes first. Untracked or uncommitted new paths are not discovered. A discoverable kit has a root README.md and at least one root .prompt.md. Files listed in a README&#x27;s File table or bulleted Files/Contents section must also be committed. This accommodates manual and Canvas/automation kits without prescribing their other filenames. All tracked files beneath the selected kit are copied. Discovery checks these structural signals, not semantic completeness; review the kit&#x27;s instructions and contents before use. Source and destination must not contain symlink components; selected source files must be ordinary files. Every installation also includes the root LICENSE; retain it when sharing copied original material. For manual copies, follow the attribution guidance.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation, Campaign maintenance, Running a campaign</dd></div><div><dt>Audience</dt><dd>DM, Players</dd></div><div><dt>Setup</dt><dd>Local Python</dd></div><div><dt>Copilot</dt><dd>No Copilot required</dd></div></dl>
+  <p class="source">tools/campaign-starter/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation|Campaign maintenance|Running a campaign" data-audience="DM|Players" data-setup="Read-through guide" data-feature="Repository instructions|Custom agents|Chat prompts">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/examples/first-campaign/README.md">First campaign walkthrough</a></h3>
+  <p>This fictional walkthrough shows how the library&#x27;s resources fit together without connecting repositories or publishing anything automatically. It uses the imaginary campaign The Lanterns of Brackenmere. Replace all examples with reviewed campaign material before using them in a real game.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation, Campaign maintenance, Running a campaign</dd></div><div><dt>Audience</dt><dd>DM, Players</dd></div><div><dt>Setup</dt><dd>Read-through guide</dd></div><div><dt>Copilot</dt><dd>Repository instructions, Custom agents, Chat prompts</dd></div></dl>
+  <p class="source">examples/first-campaign/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/agents/npc-creator.md">NPC Creator</a></h3>
+  <p>Generates fully realized NPCs with rich backstories, motivations, secrets, and roleplaying guidance. Use this agent when you need memorable characters for your campaign.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-creation/agents/npc-creator.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="Players" data-setup="Workspace template" data-feature="Repository instructions">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/templates/player-starter/README.md">Player campaign workspace</a></h3>
+  <p>An empty, player-facing workspace. This template does not create a repository, change permissions, activate services, or publish a website. Use it in a separate repository containing only information its readers may know.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>Players</dd></div><div><dt>Setup</dt><dd>Workspace template</dd></div><div><dt>Copilot</dt><dd>Repository instructions</dd></div></dl>
+  <p class="source">campaign-creation/templates/player-starter/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="Shared table" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/agents/session-zero.md">Session-Zero Campaign Builder</a></h3>
+  <p>Facilitates a privacy-conscious D&amp;D session zero and drafts a proposed campaign brief and reusable instructions for human review.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>Shared table</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-creation/agents/session-zero.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="Shared table" data-setup="Manual prompt|Optional cloud automation" data-feature="Chat prompts|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/session-kits/session-zero/README.md">Session-Zero Campaign Builder</a></h3>
+  <p>Turn a staged group discussion into a proposed, player-facing campaign brief and reusable Copilot instructions. The builder works manually; an optional paused automation recipe is provided. Copying this kit does not install an automation or Canvas, create an issue or label, or change canon.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>Shared table</dd></div><div><dt>Setup</dt><dd>Manual prompt, Optional cloud automation</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Cloud automations</dd></div></dl>
+  <p class="source">campaign-creation/session-kits/session-zero/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign creation" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-creation/agents/world-builder.md">World Builder</a></h3>
+  <p>Creates detailed, original D&amp;D worlds including geography, factions, history, and culture. Use this agent when you need to build or expand a campaign setting.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign creation</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-creation/agents/world-builder.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM|Players" data-setup="Manual prompt|Optional cloud automation|Issue form" data-feature="Chat prompts|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/player-submissions/README.md">Between-Session Player Submissions</a></h3>
+  <p>Collect player proposals, plans, downtime intentions, and questions without mistaking them for events that have happened. This kit is split across two different trust boundaries:</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM, Players</dd></div><div><dt>Setup</dt><dd>Manual prompt, Optional cloud automation, Issue form</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Cloud automations</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/player-submissions/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Manual prompt|Canvas generation|Optional cloud automation" data-feature="Chat prompts|Canvas|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/continuity-dashboard/README.md">Campaign Continuity Dashboard</a></h3>
+  <p>Review campaign-wide threads, NPC statuses, promises, decisions, timeline freshness, and conflicting evidence across explicitly approved notes. This is not a one-session recap: Session Bridge remains independent. Neither this kit nor Party Journal is read or synchronized automatically.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Canvas generation, Optional cloud automation</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Canvas, Cloud automations</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/continuity-dashboard/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/agents/campaign-tracker.md">Campaign Tracker</a></h3>
+  <p>Tracks active plot threads, story arcs, and campaign-level story progression. Use this agent to get a high-level view of where the campaign stands and what to focus on next.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-maintenance/agents/campaign-tracker.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Manual prompt|Local Python|Optional Actions workflow" data-feature="Chat prompts|No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/campaign-health/README.md">Campaign health: operational hygiene</a></h3>
+  <p>A standalone, deterministic Python standard-library check of supplied metadata and explicit local file references. It does not read or interpret narrative, find all campaign files, assess continuity, measure engagement, or infer player enjoyment. It complements rather than duplicates Session Bridge. The example is fictional; its paths do not exist in this library and its thresholds are examples, not recommendations.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Local Python, Optional Actions workflow</dd></div><div><dt>Copilot</dt><dd>Chat prompts, No Copilot required</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/campaign-health/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/agents/canon-consistency.md">Canon Consistency Reviewer</a></h3>
+  <p>Reviews supplied D&amp;D campaign changes against explicitly approved canon and flags sourced potential conflicts without changing canon.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-maintenance/agents/canon-consistency.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Manual prompt|Local Python|Optional Actions workflow" data-feature="Chat prompts|No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/canon-consistency/README.md">Canon Consistency kit</a></h3>
+  <p>Use this copy-in kit in a campaign repository, not this template library. It combines a bounded, manual AI review with an independent, offline JSON manifest checker. The checker validates structure and references only: it cannot detect narrative contradictions, prove sources exist, or decide what is canon. The DM adjudicates every finding.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Local Python, Optional Actions workflow</dd></div><div><dt>Copilot</dt><dd>Chat prompts, No Copilot required</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/canon-consistency/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/agents/character-arc-weaver.md">Character Arc Weaver</a></h3>
+  <p>Weaves player-approved fictional character goals into optional hooks tied only to supplied approved quests. Produces a DM-only review draft while preserving player agency and story boundaries.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-maintenance/agents/character-arc-weaver.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Manual prompt|Optional cloud automation" data-feature="Chat prompts|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/character-arc-weaver/README.md">Character Arc Weaver</a></h3>
+  <p>Turn a player&#x27;s explicitly approved fictional character goal and DM-approved quest list into a small menu of optional story connections. This is a DM-facing drafting aid, not a character simulator or campaign-canon editor.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Optional cloud automation</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Cloud automations</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/character-arc-weaver/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in instructions" data-feature="Repository instructions">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/copilot-instructions.md">Copilot Instructions — Campaign Maintenance</a></h3>
+  <p>You are a campaign management assistant for ongoing Dungeons &amp; Dragons campaigns. Your role is to help Dungeon Masters keep their campaigns organized, consistent, and moving forward between sessions.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in instructions</dd></div><div><dt>Copilot</dt><dd>Repository instructions</dd></div></dl>
+  <p class="source">campaign-maintenance/copilot-instructions.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Manual prompt|Optional cloud automation|Local Python" data-feature="Chat prompts|Cloud automations|No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/faction-world-clocks/README.md">Faction Turns &amp; World Clocks</a></h3>
+  <p>Plan what factions might do between player-facing scenes, and make the consequences legible without letting a tool advance the world. Works on its own: no Canvas, shared kit, scheduled job, or custom agent is required.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Optional cloud automation, Local Python</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Cloud automations, No Copilot required</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/faction-world-clocks/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/agents/lore-keeper.md">Lore Keeper</a></h3>
+  <p>Maintains and enforces lore consistency across a D&amp;D campaign. Use this agent to check new content against established facts, retrieve lore details, and flag contradictions.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-maintenance/agents/lore-keeper.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/agents/notes-analysis.md">Notes Analysis</a></h3>
+  <p>Reads session notes posted in a GitHub Issue and identifies their impact on the campaign — story threads, NPC changes, lore updates, player decisions, and pending consequences. Use this agent after each session to turn raw issue notes into actionable campaign intelligence.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-maintenance/agents/notes-analysis.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="Players" data-setup="Manual prompt|Canvas generation|Optional cloud automation" data-feature="Chat prompts|Canvas|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/party-journal/README.md">Party Journal &amp; Quest Board</a></h3>
+  <p>Give players a shared reference for known quests, discoveries, inventory, and next-session plans. Works alone; no access to a DM kit is needed or granted.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>Players</dd></div><div><dt>Setup</dt><dd>Manual prompt, Canvas generation, Optional cloud automation</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Canvas, Cloud automations</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/party-journal/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM|Players" data-setup="Manual prompt|Local Python" data-feature="Chat prompts|No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/player-safe-release/README.md">Player-safe release</a></h3>
+  <p>A manual, staged handoff for sharing selected campaign notes from a DM-only repository to a separate player-accessible repository. It does not publish anything, connect repositories, or make an AI judgment authoritative.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM, Players</dd></div><div><dt>Setup</dt><dd>Manual prompt, Local Python</dd></div><div><dt>Copilot</dt><dd>Chat prompts, No Copilot required</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/player-safe-release/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Manual prompt|Canvas generation|Optional cloud automation" data-feature="Chat prompts|Canvas|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/session-kits/session-bridge/README.md">Session Bridge</a></h3>
+  <p>Turn one session&#x27;s rough notes into a reviewable recap, continuity record, and next-session checklist. Works alone; no other kit or agent is required.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Canvas generation, Optional cloud automation</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Canvas, Cloud automations</dd></div></dl>
+  <p class="source">campaign-maintenance/session-kits/session-bridge/README.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/agents/session-notes.md">Session Notes</a></h3>
+  <p>Writes structured session summaries, recaps, and &quot;previously on&quot; narratives for D&amp;D campaigns. Use this agent after each session to document what happened.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">campaign-maintenance/agents/session-notes.md</p></article>
+</li>
+<li class="resource" data-phase="Campaign maintenance" data-audience="DM" data-setup="Optional Actions workflow" data-feature="No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/campaign-maintenance/actions/session-note-importers/README.md">Session note import workflows</a></h3>
+  <p>Four independent, on-demand GitHub Actions templates import approved notes from Discord, Google Docs, Microsoft 365, or a Git-tracked Obsidian vault. Install any subset. These templates are not active workflows in this library repository; copy them into a private, DM-only campaign repository to use them.</p>
+  <dl><div><dt>Phase</dt><dd>Campaign maintenance</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Optional Actions workflow</dd></div><div><dt>Copilot</dt><dd>No Copilot required</dd></div></dl>
+  <p class="source">campaign-maintenance/actions/session-note-importers/README.md</p></article>
+</li>
+<li class="resource" data-phase="Running a campaign" data-audience="DM" data-setup="Copy-in instructions" data-feature="Repository instructions">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/running-campaign/copilot-instructions.md">Copilot Instructions — Running the Campaign</a></h3>
+  <p>You are a real-time Dungeon Master assistant. Your role is to help DMs run engaging, responsive, and memorable sessions — providing on-the-fly content, rulings guidance, and creative support during actual play.</p>
+  <dl><div><dt>Phase</dt><dd>Running a campaign</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in instructions</dd></div><div><dt>Copilot</dt><dd>Repository instructions</dd></div></dl>
+  <p class="source">running-campaign/copilot-instructions.md</p></article>
+</li>
+<li class="resource" data-phase="Running a campaign" data-audience="DM" data-setup="Manual prompt|Canvas generation|Optional cloud automation" data-feature="Chat prompts|Canvas|Cloud automations">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/running-campaign/session-kits/dm-session-cockpit/README.md">DM Session Cockpit</a></h3>
+  <p>Keep scene cards, NPC references, hooks, and combat bookkeeping beside Copilot chat. Works alone; it does not require Session Bridge.</p>
+  <dl><div><dt>Phase</dt><dd>Running a campaign</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Canvas generation, Optional cloud automation</dd></div><div><dt>Copilot</dt><dd>Chat prompts, Canvas, Cloud automations</dd></div></dl>
+  <p class="source">running-campaign/session-kits/dm-session-cockpit/README.md</p></article>
+</li>
+<li class="resource" data-phase="Running a campaign" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/running-campaign/agents/dungeon-master.md">Dungeon Master</a></h3>
+  <p>Provides in-the-moment DM narration, scene descriptions, atmospheric details, and rulings support during a live D&amp;D session. Use this agent while running the table.</p>
+  <dl><div><dt>Phase</dt><dd>Running a campaign</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">running-campaign/agents/dungeon-master.md</p></article>
+</li>
+<li class="resource" data-phase="Running a campaign" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/running-campaign/agents/encounter-improv.md">Encounter Improv</a></h3>
+  <p>Generates improvised encounters, random events, and unexpected complications on the fly during a D&amp;D session. Use this agent when players go off-script or you need content fast.</p>
+  <dl><div><dt>Phase</dt><dd>Running a campaign</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">running-campaign/agents/encounter-improv.md</p></article>
+</li>
+<li class="resource" data-phase="Running a campaign" data-audience="DM" data-setup="Manual prompt|Local Python|Optional Actions workflow" data-feature="Chat prompts|No Copilot required">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/running-campaign/session-kits/encounter-stress-tester/README.md">Encounter Stress Tester</a></h3>
+  <p>A dependency-free, deterministic Python CLI for checking arithmetic from fictional or user-supplied encounter numbers before play. It reports action counts, HP-only effective HP, simplified expected damage/round estimates, approximate time-to-down ranges, and optional user-supplied XP-budget comparisons. It does not declare encounters safe, fair, or balanced.</p>
+  <dl><div><dt>Phase</dt><dd>Running a campaign</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Manual prompt, Local Python, Optional Actions workflow</dd></div><div><dt>Copilot</dt><dd>Chat prompts, No Copilot required</dd></div></dl>
+  <p class="source">running-campaign/session-kits/encounter-stress-tester/README.md</p></article>
+</li>
+<li class="resource" data-phase="Running a campaign" data-audience="DM" data-setup="Copy-in agent" data-feature="Custom agents">
+  <article><h3><a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/running-campaign/agents/npc-voice.md">NPC Voice</a></h3>
+  <p>Helps DMs voice and roleplay NPCs during live sessions, providing in-character dialogue, emotional reactions, and distinct personalities. Use this agent when you need to bring an NPC to life at the table.</p>
+  <dl><div><dt>Phase</dt><dd>Running a campaign</dd></div><div><dt>Audience</dt><dd>DM</dd></div><div><dt>Setup</dt><dd>Copy-in agent</dd></div><div><dt>Copilot</dt><dd>Custom agents</dd></div></dl>
+  <p class="source">running-campaign/agents/npc-voice.md</p></article>
+</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <p>This catalog describes library resources, not campaign content. Source links open
+      the current <code>main</code> branch on GitHub. Resource READMEs remain the setup authority.</p>
+    <a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/ATTRIBUTION.md">Attribution and third-party content</a>
+  </footer>
+</body>
+</html>

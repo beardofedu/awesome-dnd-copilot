@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find Dungeons &amp; Dragons Copilot resources by campaign phase, audience, setup type, and feature.">
+  <title>D&amp;D Copilot resource catalog</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="catalog.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#results">Skip to resources</a>
+  <header>
+    <p class="eyebrow">awesome-dnd-copilot</p>
+    <h1>Find your next campaign tool</h1>
+    <p>Original D&amp;D instructions, agents, session kits, and workspace starters.
+      Choose a resource, then follow its source file for setup.</p>
+    <nav aria-label="Library">
+      <a href="https://github.com/beardofedu/awesome-dnd-copilot">Repository</a>
+      <a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/COMPATIBILITY.md">Compatibility guide</a>
+      <a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/session-kits.md">Session kit setup</a>
+    </nav>
+  </header>
+  <main>
+    <aside aria-label="Before you choose">
+      <p><strong>Audience labels are not access controls.</strong> Keep DM secrets in a
+        separate DM-only repository. Player resources use reviewed information only.
+        Resources tagged for both audiences may require separate repositories.</p>
+      <p>Copying files activates nothing. Canvas generation, optional cloud automation,
+        Actions workflows, and website publication require separate setup and approval.
+        Feature availability varies; read the compatibility guide. "No Copilot required"
+        means a local or non-AI part can work independently, not that every part does.</p>
+    </aside>
+    <form id="filters" role="search" aria-label="Filter resources" hidden>
+      <label class="search" for="query">Search resources
+        <input id="query" name="query" type="search" placeholder="Try recaps, NPCs, canon, or quests"
+          aria-describedby="filter-help" autocomplete="off">
+      </label>
+      <fieldset>
+        <legend>Narrow your choices</legend>
+        <div class="filter-grid">
+{{filters}}
+        </div>
+      </fieldset>
+      <p id="filter-help">Search titles, descriptions, tags, and source paths.
+        Filters combine; optional features do not become requirements.</p>
+      <button type="reset">Clear all filters</button>
+    </form>
+    <noscript><p>JavaScript is off. All resources are listed below; use your browser's Find command to search.</p></noscript>
+    <section id="results" aria-labelledby="results-heading" tabindex="-1">
+      <h2 id="results-heading">Resources</h2>
+      <p id="result-count" role="status" aria-live="polite" aria-atomic="true">{{count}} resources</p>
+      <p id="empty" hidden>No resources match. Try a broader search or clear all filters.</p>
+      <ul class="resources">
+{{cards}}
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <p>This catalog describes library resources, not campaign content. Source links open
+      the current <code>main</code> branch on GitHub. Resource READMEs remain the setup authority.</p>
+    <a href="https://github.com/beardofedu/awesome-dnd-copilot/blob/main/ATTRIBUTION.md">Attribution and third-party content</a>
+  </footer>
+</body>
+</html>
