@@ -139,9 +139,9 @@ cp campaign-creation/agents/world-builder.md /path/to/your-repo/.github/agents/
 ### Session note import workflows
 
 The [source-specific GitHub Actions templates](./campaign-maintenance/actions/session-note-importers/)
-import approved notes from Discord, Google Docs, Microsoft 365, or a Git-tracked
-Obsidian folder. Install each workflow independently in a private, DM-only
-campaign repository and choose an Issue or Pull request for review on each
+import approved notes from Discord, Google Docs, Microsoft 365, OneNote, or a
+Git-tracked Obsidian folder. Install each workflow independently in a private,
+DM-only campaign repository and choose an Issue or Pull request for review on each
 manual run. Provider credentials and API permissions are configured by the
 campaign owner.
 

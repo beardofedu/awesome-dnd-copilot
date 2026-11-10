@@ -14,6 +14,7 @@ import sys
 import time
 import zipfile
 from datetime import datetime, timezone
+from html.parser import HTMLParser
 from io import BytesIO
 from pathlib import Path
 from urllib.parse import quote, urlencode, urlparse
@@ -204,6 +205,144 @@ def _graph_download(url: str) -> bytes:
     if status != 200:
         raise ImportFailure(f"Microsoft Graph content download returned HTTP {status}.")
     return body
+
+
+def _validate_graph_page_url(url: str) -> None:
+    try:
+        parsed = urlparse(url)
+        port = parsed.port
+    except ValueError:
+        raise ImportFailure("Microsoft Graph returned an unexpected pagination URL.") from None
+    if (
+        parsed.scheme != "https"
+        or parsed.hostname != "graph.microsoft.com"
+        or port not in (None, 443)
+        or parsed.username
+        or parsed.password
+    ):
+        raise ImportFailure("Microsoft Graph returned an unexpected pagination URL.")
+
+
+class _OneNoteHTMLParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+        self.ignored: list[str] = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"head", "script", "style", "title"}:
+            self.ignored.append(tag)
+        if not self.ignored:
+            if tag in {"p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "br"}:
+                self.parts.append("\n")
+            elif tag in {"td", "th"}:
+                self.parts.append("\t")
+
+    def handle_endtag(self, tag):
+        if self.ignored:
+            if tag == self.ignored[-1]:
+                self.ignored.pop()
+            return
+        if tag in {"p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6"}:
+            self.parts.append("\n")
+
+    def handle_data(self, data):
+        if not self.ignored:
+            self.parts.append(data)
+
+
+def _onenote_text(data: bytes) -> str:
+    parser = _OneNoteHTMLParser()
+    parser.feed(_text(data, source="OneNote page"))
+    parser.close()
+    return "\n".join(line.strip() for line in "".join(parser.parts).splitlines() if line.strip())
+
+
+def import_onenote(max_items: int) -> list[dict[str, str]]:
+    tenant = os.environ.get("ONENOTE_TENANT_ID", "").strip()
+    client = os.environ.get("ONENOTE_CLIENT_ID", "").strip()
+    refresh_token = os.environ.get("ONENOTE_REFRESH_TOKEN", "")
+    section = os.environ.get("ONENOTE_SECTION_ID", "").strip()
+    if not all([tenant, client, refresh_token, section]):
+        raise ImportFailure(
+            "Set ONENOTE_REFRESH_TOKEN and ONENOTE_TENANT_ID/ONENOTE_CLIENT_ID/ONENOTE_SECTION_ID."
+        )
+    status, _, body = _request(
+        f"https://login.microsoftonline.com/{quote(tenant, safe='')}/oauth2/v2.0/token",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        data=urlencode(
+            {
+                "client_id": client,
+                "grant_type": "refresh_token",
+                "refresh_token": refresh_token,
+                "scope": "https://graph.microsoft.com/Notes.Read offline_access",
+            }
+        ).encode(),
+    )
+    if status != 200:
+        raise ImportFailure(
+            f"OneNote sign-in returned HTTP {status}. Check consent, public-client configuration, "
+            "and ONENOTE_REFRESH_TOKEN; sign in again if expired or revoked."
+        )
+    try:
+        payload = json.loads(_text(body, source="OneNote token response"))
+    except json.JSONDecodeError:
+        raise ImportFailure("OneNote sign-in returned an invalid token response.") from None
+    token = payload.get("access_token") if isinstance(payload, dict) else None
+    if not isinstance(token, str) or not token.strip():
+        raise ImportFailure("OneNote sign-in returned an invalid token response.")
+
+    base = "https://graph.microsoft.com/v1.0/me/onenote"
+    page_url = f"{base}/sections/{quote(section, safe='')}/pages"
+    params = {
+        "$top": str(max_items),
+        "$select": "id,title,lastModifiedDateTime,links",
+        "$orderby": "lastModifiedDateTime desc",
+    }
+    pages = []
+    for _ in range(10):
+        listing = _json_request(page_url, token=token, params=params)
+        if not isinstance(listing, dict) or not isinstance(listing.get("value"), list):
+            raise ImportFailure("OneNote returned an invalid page listing.")
+        pages.extend(listing["value"][:max_items - len(pages)])
+        if len(pages) >= max_items:
+            break
+        page_url = listing.get("@odata.nextLink")
+        if page_url is None:
+            break
+        if not isinstance(page_url, str) or not page_url:
+            raise ImportFailure("OneNote returned an invalid pagination URL.")
+        _validate_graph_page_url(page_url)
+        params = None
+    else:
+        raise ImportFailure("OneNote section scan reached its page limit; no partial import was produced.")
+
+    records = []
+    for page in pages:
+        if not isinstance(page, dict) or not isinstance(page.get("id"), str) or not page["id"]:
+            raise ImportFailure("OneNote returned a page without a valid ID.")
+        content_url = f"{base}/pages/{quote(page['id'], safe='')}/content"
+        status, _, body = _request(
+            content_url,
+            headers={"Authorization": f"Bearer {token}", "Accept": "text/html"},
+        )
+        if status != 200:
+            raise ImportFailure(f"OneNote page content returned HTTP {status}; no partial import was produced.")
+        content = _onenote_text(body)
+        if content:
+            links = page.get("links") or {}
+            web_link = links.get("oneNoteWebUrl") if isinstance(links, dict) else None
+            reference = web_link.get("href") if isinstance(web_link, dict) else None
+            records.append(
+                {
+                    "id": page["id"],
+                    "name": str(page.get("title") or "OneNote page"),
+                    "updated": str(page.get("lastModifiedDateTime") or ""),
+                    "reference": str(reference or content_url.removesuffix("/content")),
+                    "text": content,
+                }
+            )
+    return records
 
 
 def import_discord(max_items: int) -> list[dict[str, str]]:
@@ -406,19 +545,7 @@ def import_microsoft_365(max_items: int) -> list[dict[str, str]]:
         children.extend(page.get("value", []))
         page_url = page.get("@odata.nextLink")
         if page_url:
-            parsed_url = urlparse(page_url)
-            try:
-                page_port = parsed_url.port
-            except ValueError:
-                raise ImportFailure("Microsoft Graph returned an unexpected pagination URL.") from None
-            if (
-                parsed_url.scheme != "https"
-                or parsed_url.hostname != "graph.microsoft.com"
-                or page_port not in (None, 443)
-                or parsed_url.username
-                or parsed_url.password
-            ):
-                raise ImportFailure("Microsoft Graph returned an unexpected pagination URL.")
+            _validate_graph_page_url(page_url)
         page_params = None
         eligible = [
             item
@@ -543,6 +670,7 @@ IMPORTERS = {
     "discord": import_discord,
     "google-drive": import_google_drive,
     "microsoft-365": import_microsoft_365,
+    "onenote": import_onenote,
     "obsidian": import_obsidian,
 }
 
