@@ -392,7 +392,7 @@ def import_onenote(max_items: int) -> list[dict[str, str]]:
         if status != 200:
             raise ImportFailure(f"OneNote page content returned HTTP {status}; no partial import was produced.")
         content = _onenote_text(body)
-        if content:
+        if content.strip():
             links = page.get("links") or {}
             web_link = links.get("oneNoteWebUrl") if isinstance(links, dict) else None
             reference = web_link.get("href") if isinstance(web_link, dict) else None
