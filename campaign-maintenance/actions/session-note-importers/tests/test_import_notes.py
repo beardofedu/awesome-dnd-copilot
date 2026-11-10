@@ -270,6 +270,17 @@ class OneNoteTests(unittest.TestCase):
         self.addCleanup(request.stop)
         self.token_response = (200, {}, b'{"access_token":"private-access-token","refresh_token":"replacement"}')
 
+    def test_table_conversion_preserves_paragraph_wrapped_and_empty_cells(self):
+        content = (
+            b"<table><tr><td><p>Loot</p></td><td><p>10 gp</p></td><td></td></tr>"
+            b"<tr><td></td><td><p>Empty first</p></td><td><p>Last</p></td></tr></table>"
+        )
+
+        self.assertEqual(
+            import_notes._onenote_text(content),
+            "Loot\t10 gp\t\n\tEmpty first\tLast",
+        )
+
     def test_refreshes_token_paginates_and_imports_bounded_plain_text_with_provenance(self):
         first = {
             "id": "page/one",

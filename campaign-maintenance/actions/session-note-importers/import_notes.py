@@ -228,34 +228,97 @@ class _OneNoteHTMLParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.parts: list[str] = []
         self.ignored: list[str] = []
+        self.tables: list[dict] = []
+
+    @staticmethod
+    def _cell_text(parts: list[str]) -> str:
+        return " ".join("".join(parts).split())
+
+    @classmethod
+    def _finish_cell(cls, table):
+        if table["cell"] is not None and table["row"] is not None:
+            table["row"].append(cls._cell_text(table["cell"]))
+            table["cell"] = None
+
+    @classmethod
+    def _finish_row(cls, table):
+        cls._finish_cell(table)
+        if table["row"] is not None:
+            table["rows"].append(table["row"])
+            table["row"] = None
 
     def handle_starttag(self, tag, attrs):
         if tag in {"head", "script", "style", "title"}:
             self.ignored.append(tag)
-        if not self.ignored:
-            if tag in {"p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "br"}:
-                self.parts.append("\n")
-            elif tag in {"td", "th"}:
-                self.parts.append("\t")
+        if self.ignored:
+            return
+        if tag == "table":
+            self.tables.append({"rows": [], "row": None, "cell": None})
+            return
+        if self.tables:
+            table = self.tables[-1]
+            if tag == "tr":
+                self._finish_row(table)
+                table["row"] = []
+            elif tag in {"td", "th"} and table["row"] is not None:
+                self._finish_cell(table)
+                table["cell"] = []
+            elif table["cell"] is not None and tag in {
+                "p", "div", "li", "h1", "h2", "h3", "h4", "h5", "h6", "br",
+            }:
+                table["cell"].append(" ")
+            return
+        if tag in {"p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "br"}:
+            self.parts.append("\n")
 
     def handle_endtag(self, tag):
         if self.ignored:
             if tag == self.ignored[-1]:
                 self.ignored.pop()
             return
+        if tag == "table" and self.tables:
+            table = self.tables.pop()
+            self._finish_row(table)
+            rendered = "\n".join("\t".join(row) for row in table["rows"])
+            if self.tables and self.tables[-1]["cell"] is not None:
+                self.tables[-1]["cell"].append(rendered)
+            else:
+                self.parts.extend(["\n", rendered, "\n"])
+            return
+        if self.tables:
+            table = self.tables[-1]
+            if tag in {"td", "th"}:
+                self._finish_cell(table)
+            elif tag == "tr":
+                self._finish_row(table)
+            elif table["cell"] is not None and tag in {
+                "p", "div", "li", "h1", "h2", "h3", "h4", "h5", "h6",
+            }:
+                table["cell"].append(" ")
+            return
         if tag in {"p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6"}:
             self.parts.append("\n")
 
     def handle_data(self, data):
-        if not self.ignored:
-            self.parts.append(data)
+        if self.ignored:
+            return
+        if self.tables:
+            cell = self.tables[-1]["cell"]
+            if cell is not None:
+                cell.append(data)
+            return
+        self.parts.append(data)
 
 
 def _onenote_text(data: bytes) -> str:
     parser = _OneNoteHTMLParser()
     parser.feed(_text(data, source="OneNote page"))
     parser.close()
-    return "\n".join(line.strip() for line in "".join(parser.parts).splitlines() if line.strip())
+    return "\n".join(
+        line.strip(" \r")
+        for line in "".join(parser.parts).splitlines()
+        if line.strip(" \t\r") or "\t" in line
+    )
 
 
 def import_onenote(max_items: int) -> list[dict[str, str]]:
