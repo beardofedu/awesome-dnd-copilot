@@ -25,9 +25,10 @@ repository root, and website files go in `docs/`. See the placement table below.
 | Give players a separate, reviewed workspace or website | [Player starter](./campaign-creation/templates/player-starter/) and [player-site guide](./campaign-creation/templates/campaign-player-site/) |
 | See the resources used together from setup through sharing | [First campaign walkthrough](./examples/first-campaign/README.md) |
 
-New to the library? Read the [compatibility guide](./COMPATIBILITY.md) before
-choosing a resource. Availability for Copilot features depends on your account,
-repository, and organization settings.
+New to the library? Start with the [five-minute quickstart](./QUICKSTART.md)
+to choose, preview, install, and inspect a fictional sample. Read the
+[compatibility guide](./COMPATIBILITY.md) for feature requirements; availability
+depends on your account, repository, and organization settings.
 
 ## Start a campaign workspace
 

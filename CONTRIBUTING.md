@@ -39,6 +39,13 @@ The full test matrix is documented in
 [`.github/workflows/prompt-regression.yml`](./.github/workflows/prompt-regression.yml).
 Mention checks that you could not run in your pull request.
 
+## Changelog and releases
+
+For user-facing changes, add a concise entry under **Unreleased** in the
+[changelog](./CHANGELOG.md), including migration notes when setup or resource
+contracts change. Maintainers use the [release guide](./RELEASING.md) to prepare
+versioned snapshots; merging a contribution does not publish a release.
+
 ## Pull requests
 
 Use the pull-request template. Explain the problem and intended audience,
